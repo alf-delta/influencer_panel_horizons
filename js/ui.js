@@ -34,16 +34,27 @@ export function avatarInitials(name = '') {
 
 // Аватарка: если есть username — грузит фото из Instagram через unavatar.io,
 // при ошибке fallback на инициалы. Клик открывает профиль в новой вкладке.
-export function avatar(name = '', username = '', size = 'md') {
+function platformUrl(username, platform) {
+  const handle = username.replace(/^@/, '');
+  switch ((platform || 'instagram').toLowerCase()) {
+    case 'tiktok':   return `https://tiktok.com/@${handle}`;
+    case 'youtube':  return `https://youtube.com/${handle}`;
+    case 'twitter':
+    case 'x':        return `https://x.com/${handle}`;
+    default:         return `https://instagram.com/${handle}`;
+  }
+}
+
+export function avatar(name = '', username = '', size = 'md', platform = 'instagram') {
   const cls = `avatar avatar-${size}`;
   const initials = avatarInitials(name);
-
   const bg = avatarColor(name);
 
   if (username) {
-    const igUrl = `https://instagram.com/${username.replace(/^@/, '')}`;
+    const url = platformUrl(username, platform);
+    const plat = (platform || 'instagram').toLowerCase();
     return `
-      <a href="${igUrl}" target="_blank" rel="noopener" title="@${username} в Instagram"
+      <a href="${url}" target="_blank" rel="noopener" title="@${username} on ${plat}"
          class="${cls}" style="display:inline-flex;text-decoration:none;background:${bg};">
         ${initials}
       </a>`;

@@ -3,16 +3,48 @@
 // Direct implementation of horizons_influencer_system_v2.json
 // ============================================================
 
+// Zone A — the 5 Horizons target states + their major cities
 const ZONE_A = [
-  'charlotte', 'south carolina', 'north carolina', 'raleigh', 'durham',
-  'asheville', 'columbia sc', 'columbia, sc', 'charleston', 'greenville',
-  'chesterfield', 'sc', ' nc', ',nc', ',sc',
+  // South Carolina + Charlotte metro
+  'south carolina', ',sc', ' sc,', 'sc ', '(sc)',
+  'columbia', 'charleston', 'greenville', 'spartanburg', 'myrtle beach', 'rock hill', 'florence',
+  'charlotte', 'concord', 'gastonia', 'fort mill', 'huntersville', 'kannapolis', 'mooresville',
+  // Texas
+  'texas', ',tx', ' tx,', 'tx ', '(tx)',
+  'houston', 'dallas', 'austin', 'san antonio', 'fort worth', 'el paso', 'arlington', 'plano',
+  // California
+  'california', ',ca', ' ca,', 'ca ', '(ca)',
+  'los angeles', 'san francisco', 'san diego', 'san jose', 'sacramento', 'oakland', 'fresno', 'long beach',
+  // Tennessee
+  'tennessee', ',tn', ' tn,', 'tn ', '(tn)',
+  'nashville', 'memphis', 'knoxville', 'chattanooga', 'clarksville', 'murfreesboro',
+  // Ohio
+  'ohio', ',oh', ' oh,', 'oh ', '(oh)',
+  'columbus', 'cleveland', 'cincinnati', 'toledo', 'akron', 'dayton',
 ];
 
+// Zone B — states that border any of the 5 target states
 const ZONE_B = [
-  'georgia', 'tennessee', 'virginia', 'atlanta', 'nashville',
-  'knoxville', 'richmond', 'savannah', ' ga', ' tn', ' va',
-  ',ga', ',tn', ',va',
+  // SC neighbors
+  'north carolina', 'georgia',
+  'charlotte', 'raleigh', 'asheville', 'durham', 'atlanta', 'savannah',
+  ',nc', ',ga', ' nc,', ' ga,',
+  // TX neighbors
+  'oklahoma', 'arkansas', 'louisiana', 'new mexico',
+  'oklahoma city', 'tulsa', 'new orleans', 'albuquerque',
+  ',ok', ',ar', ',la', ',nm',
+  // CA neighbors
+  'oregon', 'nevada', 'arizona',
+  'portland', 'las vegas', 'phoenix',
+  ',or', ',nv', ',az',
+  // TN neighbors
+  'kentucky', 'virginia', 'alabama', 'mississippi', 'missouri',
+  'louisville', 'richmond', 'birmingham', 'jackson', 'st. louis',
+  ',ky', ',va', ',al', ',ms', ',mo',
+  // OH neighbors
+  'pennsylvania', 'west virginia', 'indiana', 'michigan',
+  'pittsburgh', 'philadelphia', 'indianapolis', 'detroit',
+  ',pa', ',wv', ',in', ',mi',
 ];
 
 const CONTENT_KEYWORDS = [

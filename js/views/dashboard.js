@@ -77,7 +77,7 @@ function renderContent(stats, top, recent) {
         <div class="dash-section-title">Top Performers</div>
         ${top.length ? top.map(inf => `
           <div class="top-item" data-id="${inf.id}" style="cursor:pointer">
-            ${avatar(inf.name, inf.username, 'sm')}
+            ${avatar(inf.name, inf.username, 'sm', inf.platform)}
             <div style="flex:1;min-width:0">
               <div class="font-medium truncate" style="font-size:13px">${inf.name}</div>
               <div class="text-muted text-xs">@${inf.username || '—'} · ${zoneBadge(inf.geo_zone)}</div>
@@ -106,7 +106,7 @@ function renderContent(stats, top, recent) {
                 <tr data-id="${inf.id}" style="cursor:pointer">
                   <td style="padding:9px 10px;border-bottom:1px solid var(--divider)">
                     <div style="display:flex;align-items:center;gap:9px">
-                      ${avatar(inf.name, inf.username, 'sm')}
+                      ${avatar(inf.name, inf.username, 'sm', inf.platform)}
                       <div>
                         <div style="font-weight:500">${inf.name}</div>
                         <div class="text-muted text-xs">@${inf.username || '—'}</div>

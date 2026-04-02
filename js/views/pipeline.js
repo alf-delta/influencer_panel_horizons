@@ -71,7 +71,7 @@ function renderCard(inf, colIdx, total) {
           <div class="kanban-card-name">${inf.name}</div>
           <div class="kanban-card-user">@${inf.username || '—'}</div>
         </div>
-        ${avatar(inf.name, inf.username, 'sm')}
+        ${avatar(inf.name, inf.username, 'sm', inf.platform)}
       </div>
       <div class="kanban-card-meta">
         ${tierBadge(inf.tier)}

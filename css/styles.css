@@ -76,6 +76,20 @@ input, textarea, select { font-family: var(--font); }
   border-bottom: 1px solid var(--sidebar-border);
 }
 
+.nav-item-logo {
+  justify-content: flex-start;
+}
+
+.nav-logo-img {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+  opacity: .75;
+  transition: opacity .15s;
+}
+.nav-item-logo:hover .nav-logo-img,
+.nav-item-logo.active .nav-logo-img { opacity: 1; }
+
 .brand-mark {
   font-size: 22px;
   color: var(--gold);
@@ -668,8 +682,31 @@ input, textarea, select { font-family: var(--font); }
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
+}
+
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 14px;
+  background: var(--accent);
+  border-radius: 8px;
+  color: #fff;
+}
+
+.bulk-count {
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .filter-select {
@@ -1668,6 +1705,216 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: var(--card-border);
   margin: 16px 0;
 }
+
+/* ---------- AI Search ---------- */
+
+/* shared label */
+.form-section-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* ── Geography card ── */
+.search-geo-card {
+  padding: 18px 20px 16px;
+  margin-bottom: 0;
+}
+
+.search-geo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.search-noloc-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--muted);
+}
+.search-noloc-toggle input { cursor: pointer; accent-color: var(--gold); }
+
+/* States grid — 5 tile cards (one per state) */
+.states-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 1000px) {
+  .states-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .states-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* State tile */
+.state-tile {
+  border: 1.5px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 10px 12px 12px;
+  background: var(--bg);
+  transition: border-color .15s, background .15s;
+}
+.state-tile-active {
+  border-color: var(--gold);
+  background: var(--white);
+}
+
+.state-tile-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 8px;
+}
+.state-tile-header input[type=checkbox] {
+  accent-color: var(--gold);
+  cursor: pointer;
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+}
+.state-tile-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+.state-tile-active .state-tile-name { color: var(--gold-dark); }
+
+/* City chips inside tile */
+.state-tile-cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  opacity: .35;
+  pointer-events: none;
+  transition: opacity .15s;
+}
+.state-tile-active .state-tile-cities {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.city-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 8px 2px 6px;
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--white);
+  color: var(--text);
+  transition: background .1s, border-color .1s;
+  line-height: 1.6;
+}
+.city-chip:has(input:checked) { background: var(--gold-light); border-color: var(--gold); color: var(--gold-dark); }
+.city-chip input { cursor: pointer; accent-color: var(--gold); display: none; }
+
+.entire-chip {
+  border-style: dashed;
+  font-weight: 600;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.entire-chip:has(input:checked) {
+  background: var(--gold-light);
+  border-color: var(--gold);
+  border-style: solid;
+  color: var(--gold-dark);
+}
+
+/* ── Filters strip ── */
+.search-filters-strip {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  padding: 16px 20px;
+  flex-wrap: wrap;
+}
+
+.search-filter-group { display: flex; flex-direction: column; gap: 0; }
+.search-filter-grow  { flex: 1; min-width: 180px; }
+
+.search-filter-btn { margin-left: auto; }
+.search-filter-btn .btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  padding: 9px 20px;
+  height: 38px;
+}
+
+.platform-checks { display: flex; gap: 12px; height: 38px; align-items: center; }
+
+.plat-check {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+.plat-check input { cursor: pointer; accent-color: var(--gold); }
+
+/* ── Results area ── */
+.search-results-area {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.search-empty,
+.search-loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+}
+
+/* ── Bridge status indicator ── */
+.bridge-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--card-border);
+  background: var(--white);
+}
+.bridge-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.bridge-status.checking .bridge-dot  { background: var(--muted); }
+.bridge-status.online   .bridge-dot  { background: var(--success); }
+.bridge-status.warn     .bridge-dot  { background: var(--gold); }
+.bridge-status.offline  .bridge-dot  { background: var(--danger); }
+.bridge-status.checking .bridge-label { color: var(--muted); }
+.bridge-status.online   .bridge-label { color: var(--success); }
+.bridge-status.warn     .bridge-label { color: var(--gold-dark); }
+.bridge-status.offline  .bridge-label { color: var(--danger); }
 
 /* ---------- Scrollbar ---------- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }

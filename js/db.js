@@ -149,6 +149,24 @@ export async function archiveInfluencer(id) {
   return updateInfluencer(id, { status: 'archived' });
 }
 
+export async function bulkUpdateStatus(ids, status) {
+  if (!ids.length) return;
+  const { error } = await db()
+    .from('influencers')
+    .update({ status })
+    .in('id', ids.map(String));
+  if (error) throw error;
+}
+
+export async function bulkDelete(ids) {
+  if (!ids.length) return;
+  const { error } = await db()
+    .from('influencers')
+    .delete()
+    .in('id', ids.map(String));
+  if (error) throw error;
+}
+
 // ---- Iterations ----
 
 export async function getIterations(influencerId) {

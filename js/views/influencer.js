@@ -44,10 +44,13 @@ function renderDrawer(drawer, inf, iterations, callbacks) {
   drawer.innerHTML = `
     <div class="drawer-header">
       <div class="drawer-profile">
-        ${avatar(inf.name, inf.username, 'lg')}
+        ${avatar(inf.name, inf.username, 'lg', inf.platform)}
         <div style="min-width:0">
           <div class="drawer-name truncate">${inf.name}</div>
-          <div class="drawer-user">@${inf.username || '—'} · ${inf.email || '—'}</div>
+          <div class="drawer-user">
+            @${inf.username || '—'}
+            ${inf.email ? ` · <a href="mailto:${inf.email}" style="color:var(--accent)">${inf.email}</a>` : ''}
+          </div>
           <div class="drawer-badges">
             ${tierBadge(inf.tier)}
             ${zoneBadge(inf.geo_zone)}

@@ -2,7 +2,7 @@
 // Horizons Influencer Panel — Candidates Table + CSV Import
 // ============================================================
 
-import { getInfluencers, bulkCreateInfluencers, createInfluencer } from '../db.js';
+import { getInfluencers, bulkCreateInfluencers, createInfluencer, bulkUpdateStatus, bulkDelete } from '../db.js';
 import { computeGeoZone, computeImportScore } from '../scoring.js';
 import { avatar, avatarInitials, tierBadge, zoneBadge, platformBadge, scoreBar, statusBadge, toast, openModal, closeModal } from '../ui.js';
 
@@ -50,6 +50,22 @@ export async function render(container, { openInfluencer, openId }) {
         <div class="filter-sep"></div>
         <span class="text-muted text-sm" id="f-count"></span>
       </div>
+      <div id="bulk-bar" class="bulk-bar" style="display:none">
+        <span id="bulk-count" class="bulk-count"></span>
+        <div class="bulk-actions">
+          <select id="bulk-status" class="filter-select" style="font-size:12px">
+            <option value="">Move to stage…</option>
+            <option value="candidate">Candidate</option>
+            <option value="outreach">Outreach</option>
+            <option value="active">Onboarding</option>
+            <option value="in_production">In Production</option>
+            <option value="review">Review</option>
+            <option value="complete">Complete</option>
+            <option value="archived">Archive</option>
+          </select>
+          <button class="btn btn-danger btn-sm" id="bulk-delete">Delete selected</button>
+        </div>
+      </div>
       <div id="table-wrap" class="table-wrap">
         <div class="loading-overlay"><div class="spinner"></div> Loading…</div>
       </div>
@@ -86,10 +102,12 @@ function renderTable(container, openInfluencer) {
   }
 
   const cols = [
+    { key: '_check',          label: '',            sortable: false },
     { key: 'name',            label: 'Influencer',  sortable: true },
     { key: 'platform',        label: 'Platform',    sortable: true },
     { key: 'followers',       label: 'Followers',   sortable: true },
     { key: 'engagement_rate', label: 'ER %',        sortable: true },
+    { key: 'location_raw',    label: 'Location',    sortable: false },
     { key: 'geo_zone',        label: 'Zone',        sortable: true },
     { key: 'import_score',    label: 'Score',       sortable: true },
     { key: 'tier',            label: 'Tier',        sortable: true },
@@ -101,7 +119,10 @@ function renderTable(container, openInfluencer) {
     <table>
       <thead>
         <tr>
-          ${cols.map(c => `
+          <th style="width:36px;padding:6px 10px">
+            <input type="checkbox" id="th-check-all" title="Select all">
+          </th>
+          ${cols.slice(1).map(c => `
             <th class="${c.sortable ? (_state.sort === c.key ? `sort-${_state.dir}` : '') : ''}"
                 data-sort="${c.sortable ? c.key : ''}">
               ${c.label}
@@ -111,20 +132,22 @@ function renderTable(container, openInfluencer) {
       <tbody>
         ${list.map(inf => `
           <tr data-id="${inf.id}">
+            <td style="padding:6px 10px" onclick="event.stopPropagation()">
+              <input type="checkbox" class="row-cb" data-id="${inf.id}">
+            </td>
             <td>
               <div style="display:flex;align-items:center;gap:10px">
-                ${avatar(inf.name, inf.username, 'sm')}
+                ${avatar(inf.name, inf.username, 'sm', inf.platform)}
                 <div>
                   <div style="font-weight:600;font-size:13px">${inf.name}</div>
-                  <div class="text-muted text-xs">@${inf.username || '—'} · ${inf.email || '—'}</div>
+                  <div class="text-muted text-xs">@${inf.username || '—'}${inf.email ? ' · ' + inf.email : ''}</div>
                 </div>
               </div>
             </td>
             <td>${platformBadge(inf.platform)}</td>
             <td style="font-weight:500">${fmtFollowers(inf.followers)}</td>
-            <td>
-              <span style="font-weight:600">${inf.engagement_rate ?? '—'}%</span>
-            </td>
+            <td><span style="font-weight:600">${inf.engagement_rate ?? '—'}%</span></td>
+            <td style="font-size:12px;color:var(--text)">${inf.location_raw || '—'}</td>
             <td>${zoneBadge(inf.geo_zone)}</td>
             <td style="min-width:120px">${scoreBar(inf.import_score)}</td>
             <td>${tierBadge(inf.tier)}</td>
@@ -136,10 +159,79 @@ function renderTable(container, openInfluencer) {
       </tbody>
     </table>`;
 
+  // Checkbox logic
+  const bulkBar   = container.querySelector('#bulk-bar');
+  const bulkCount = container.querySelector('#bulk-count');
+
+  function getSelected() {
+    return [...wrap.querySelectorAll('.row-cb:checked')].map(cb => cb.dataset.id);
+  }
+
+  function updateBulkBar() {
+    const ids = getSelected();
+    if (ids.length > 0) {
+      bulkBar.style.display = 'flex';
+      bulkCount.textContent = `${ids.length} selected`;
+    } else {
+      bulkBar.style.display = 'none';
+    }
+  }
+
+  wrap.querySelector('#th-check-all').addEventListener('change', e => {
+    wrap.querySelectorAll('.row-cb').forEach(cb => cb.checked = e.target.checked);
+    updateBulkBar();
+  });
+
+  wrap.querySelectorAll('.row-cb').forEach(cb => {
+    cb.addEventListener('change', updateBulkBar);
+  });
+
+  // Bulk status change
+  container.querySelector('#bulk-status').addEventListener('change', async e => {
+    const status = e.target.value;
+    if (!status) return;
+    const ids = getSelected();
+    if (!ids.length) { e.target.value = ''; return; }
+    const sel = e.target;
+    sel.disabled = true;
+    try {
+      await bulkUpdateStatus(ids, status);
+      toast(`${ids.length} moved to "${status}"`, 'success');
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      sel.value = '';
+      sel.disabled = false;
+      container.querySelector('#bulk-bar').style.display = 'none';
+      await loadTable(container, openInfluencer);
+    }
+  });
+
+  // Bulk delete
+  container.querySelector('#bulk-delete').addEventListener('click', async () => {
+    const ids = getSelected();
+    if (!ids.length) return;
+    if (!confirm(`Delete ${ids.length} influencer${ids.length !== 1 ? 's' : ''}? This cannot be undone.`)) return;
+    const btn = container.querySelector('#bulk-delete');
+    btn.disabled = true;
+    btn.textContent = 'Deleting…';
+    try {
+      await bulkDelete(ids);
+      toast(`${ids.length} deleted`, 'success');
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Delete selected';
+      container.querySelector('#bulk-bar').style.display = 'none';
+      await loadTable(container, openInfluencer);
+    }
+  });
+
   // Row clicks
   wrap.querySelectorAll('tbody tr').forEach(row => {
     row.addEventListener('click', e => {
-      if (e.target.closest('[data-open]')) return;
+      if (e.target.closest('[data-open]') || e.target.closest('.row-cb') || e.target.type === 'checkbox') return;
       openInfluencer(row.dataset.id);
     });
   });
