@@ -1,0 +1,659 @@
+{
+  "meta": {
+    "project": "Horizons Influencer Program",
+    "version": "2.0",
+    "location": "Patrick, SC",
+    "language": "en",
+    "changelog": "v2.0 — Enriched with research calibration (US influencer market analysis 2026). Added: qCPE as 4th scoring axis, psychology layer (parasocial theory), ROI benchmarks by format, FTC compliance requirement, hybrid compensation model for Gold tier, real candidate examples from kone.vc."
+  },
+
+  "market_context": {
+    "source": "US Influencer Marketing Systemic Analysis 2026",
+    "note": "Used for model calibration. Key figures grounding our system design decisions.",
+    "figures": {
+      "total_market_spend_usd": "~$45B annually",
+      "brands_increasing_budgets_pct": 76,
+      "tourism_roi_range": "$8–$15 per $1 invested",
+      "ambassador_program_roi": "11.3x (highest on market)",
+      "sponsored_post_roi": "2.5x–3.5x",
+      "affiliate_cpa_roi": "high, pay-per-action only",
+      "micro_influencer_er_tiktok_max": "10%+",
+      "micro_post_cost_range_usd": "$50–$1,000"
+    },
+    "format_roi_ranking": [
+      {
+        "rank": 1,
+        "format": "Long-term ambassador program",
+        "roi": "11.3x",
+        "relevance_to_horizons": "Gold tier target — our system is designed to identify and develop these",
+        "horizons_uses": true
+      },
+      {
+        "rank": 2,
+        "format": "Affiliate / promo code (CPA)",
+        "roi": "high, pay-per-action",
+        "relevance_to_horizons": "Active format. Minimal risk — we pay only for confirmed bookings.",
+        "horizons_uses": true
+      },
+      {
+        "rank": 3,
+        "format": "Complimentary stay for content (gifting)",
+        "roi": "variable, low entry threshold",
+        "relevance_to_horizons": "Primary format. Builds content library. High longevity value.",
+        "horizons_uses": true
+      },
+      {
+        "rank": 4,
+        "format": "Sponsored post (one-off)",
+        "roi": "2.5x–3.5x",
+        "relevance_to_horizons": "Not used at this stage. Transactional, low parasocial connection.",
+        "horizons_uses": false
+      }
+    ],
+    "tourism_case_studies": [
+      {
+        "brand": "Visit Salt Lake",
+        "strategy": "Pool of diverse creators showing the city from their own angle — no rigid script",
+        "result": "10M+ impressions, 3M views, 4.94% ER",
+        "lesson_for_horizons": "Our story frames replace the rigid script. Creators get narrative entry point, not a brief. Same principle."
+      },
+      {
+        "brand": "Visit California",
+        "strategy": "Niche segmentation — separate creators per audience type (foodies, accessible travel, adventure)",
+        "result": "7% growth in tourist spending. 770K impressions on accessible travel content alone.",
+        "lesson_for_horizons": "Our campaign scenarios (couples, family, wellness etc.) mirror this segmentation logic exactly."
+      },
+      {
+        "brand": "Marriott",
+        "strategy": "Integrated YouTube creator into a real user experience moment (app milestone)",
+        "result": "~4M views, viral effect",
+        "lesson_for_horizons": "Authenticity of real experience > produced ad. Our stay-first model creates this naturally."
+      },
+      {
+        "brand": "Visit Long Beach",
+        "strategy": "Local food creator as series host — authority + local trust",
+        "result": "Poppy Award win + direct revenue lift for local restaurants",
+        "lesson_for_horizons": "Zone A local creators (Charlotte, SC, NC) carry the same trust multiplier. Prioritise them."
+      }
+    ]
+  },
+
+  "psychology_layer": {
+    "note": "Psychological mechanisms that explain why our gamified, frame-first approach works. Not decorative theory — directly informs how we brief and score influencers.",
+    "mechanisms": [
+      {
+        "id": "parasocial_relationship",
+        "label": "Parasocial connection",
+        "description": "Followers develop emotional closeness to creators through regular content exposure. The creator feels like a trusted friend, not a celebrity. This is why micro/nano creators convert better than macro — proximity of perception.",
+        "horizons_application": "Story frames are written from first person. Creator is not advertising — they are experiencing. The audience follows the experience, not the ad."
+      },
+      {
+        "id": "self_disclosure",
+        "label": "Self-disclosure",
+        "description": "Creators who share vulnerability (not just wins) are perceived as authentic. Content built on personal emotional response performs better long-term.",
+        "horizons_application": "Our frames ask 'how would you feel if...' — not 'show our location'. Emotional response is the content. This is the mechanism."
+      },
+      {
+        "id": "homophily",
+        "label": "Homophily (audience mirror effect)",
+        "description": "Audiences trust creators who resemble them — same geography, values, lifestyle. A Charlotte local recommending Patrick SC carries more weight than a national travel account.",
+        "horizons_application": "Zone A scoring weight (35 pts) reflects this. Local is not a compromise — it is a strategic advantage."
+      },
+      {
+        "id": "social_proof_fomo",
+        "label": "Social proof + FOMO",
+        "description": "Promo codes create exclusivity and urgency. Seeing engagement (saves, comments) around a post reinforces the signal. Both activate simultaneously with affiliate model.",
+        "horizons_application": "Affiliate promo code is not just tracking — it is a psychological trigger. Personalised code per influencer amplifies this (e.g. 'EMILY15' vs generic 'SAVE15')."
+      },
+      {
+        "id": "platform_context",
+        "label": "Platform-specific trust mechanics",
+        "description": "Instagram activates authenticity and parasocial closeness. Facebook activates source authority and argumentation. Our primary platform (Instagram) is optimal for emotional experience content.",
+        "horizons_application": "Instagram-first approach is correct. Story format (ephemeral, personal) is higher parasocial signal than feed posts."
+      }
+    ]
+  },
+
+  "geo_zones": {
+    "description": "Geographic classification used for candidate scoring. Based on drive distance and audience proximity to Patrick, SC.",
+    "zones": {
+      "A": {
+        "label": "Primary market",
+        "score_weight": 35,
+        "includes": ["Charlotte NC", "South Carolina", "North Carolina", "Raleigh", "Durham", "Asheville", "Columbia SC", "Charleston SC", "Greenville SC", "Chesterfield County"],
+        "rationale": "Homophily effect is strongest here. Local creators speak to the exact audience within 2hr drive of the property. See tourism case studies: Visit Long Beach success driven by local authority."
+      },
+      "B": {
+        "label": "Regional market",
+        "score_weight": 20,
+        "includes": ["Georgia", "Tennessee", "Virginia", "Atlanta", "Nashville", "Knoxville", "Richmond", "Savannah"],
+        "rationale": "Southeast regional audience — reachable destination, relevant lifestyle overlap."
+      },
+      "C": {
+        "label": "National / niche",
+        "score_weight": 5,
+        "includes": ["all other US locations"],
+        "rationale": "Location-agnostic glamping/travel niche. Acceptable only if ER and content quality are exceptional. Does not activate homophily advantage."
+      }
+    }
+  },
+
+  "scoring": {
+    "description": "Auto-scoring applied at CSV import. Max score: 100. Prioritises Zone A micro/nano creators with high ER and relevant content.",
+    "axes": [
+      {
+        "id": "geo",
+        "label": "Geo zone fit",
+        "max_points": 35,
+        "research_backing": "Homophily principle. Local trust multiplier confirmed by Visit Long Beach case.",
+        "logic": {
+          "zone_A": 35,
+          "zone_B": 20,
+          "zone_C": 5
+        }
+      },
+      {
+        "id": "engagement_rate",
+        "label": "Engagement rate",
+        "max_points": 25,
+        "research_backing": "Micro/nano ER up to 10%+ vs macro 1–2%. ER is proxy for parasocial connection strength.",
+        "logic": {
+          "above_3_percent": 25,
+          "1.5_to_3_percent": 15,
+          "0.5_to_1.5_percent": 8,
+          "below_0.5_percent": 0
+        }
+      },
+      {
+        "id": "followers",
+        "label": "Follower count",
+        "max_points": 20,
+        "research_backing": "Micro ($50–$1,000/post) enables diversified pool over single macro. Visit Salt Lake used diverse pool of smaller creators vs one big star.",
+        "logic": {
+          "10k_to_100k": 20,
+          "5k_to_10k": 15,
+          "1k_to_5k": 8,
+          "above_100k": 10,
+          "below_1k": 0
+        }
+      },
+      {
+        "id": "content_relevance",
+        "label": "Content / keyword relevance",
+        "max_points": 20,
+        "research_backing": "Niche segmentation drives superior ROI (Visit California). Keyword match is fast proxy for content niche alignment.",
+        "logic": {
+          "keywords_checked": ["glamping", "couples", "lifestyle", "travel", "wellness", "outdoor", "nature", "romance", "adventure", "family", "retreat", "getaway", "staycation"],
+          "points_per_hit": 3,
+          "cap": 20
+        }
+      }
+    ]
+  },
+
+  "iteration_scoring": {
+    "description": "Post-campaign scoring per iteration. Tier is computed from cumulative rolling average across all iterations.",
+    "formula": "((content_quality + value_received + content_longevity + qcpe_score) / 40) * 100",
+    "axes": [
+      {
+        "id": "content_quality",
+        "label": "Content quality",
+        "scale": "0–10",
+        "description": "Visual quality, narrative depth, format compliance, originality, emotional resonance.",
+        "research_backing": "Self-disclosure principle: content that reveals genuine emotion outperforms scripted content long-term."
+      },
+      {
+        "id": "value_received",
+        "label": "Our value received",
+        "scale": "0–10",
+        "description": "Reach, saves, shares, direct traffic, booking inquiries attributable to this influencer.",
+        "research_backing": "Direct ROI signal. Affiliate promo code enables clean attribution."
+      },
+      {
+        "id": "content_longevity",
+        "label": "Content longevity",
+        "scale": "0–10",
+        "description": "Is the content reusable for future campaigns, ads, organic posts? Does it hold value over time?",
+        "research_backing": "Visit Salt Lake key lesson: library of authentic content > one expensive video. Long-tail value is the differentiator."
+      },
+      {
+        "id": "qcpe_score",
+        "label": "Qualified engagement (qCPE)",
+        "scale": "0–10",
+        "description": "Quality of engagement actions: saves, meaningful comments (not just emojis), link clicks, DM inquiries, story poll responses. NOT raw likes or reach.",
+        "research_backing": "Market is shifting from reach to qCPE — qualified cost per engagement. Saves and DM inquiries are highest-intent signals in tourism context.",
+        "what_to_measure": [
+          "Post saves (high intent — user wants to revisit)",
+          "Meaningful comments (questions about location, pricing, dates)",
+          "Link-in-bio clicks during and after post",
+          "DM inquiries received (direct attribution)",
+          "Story reply rate if applicable"
+        ]
+      }
+    ],
+    "accumulation_logic": "Each campaign = one scored iteration. Tier recalculated after every new iteration using rolling average. Single bad iteration does not reset Gold status. Minimum 2 iterations required before Gold can be assigned."
+  },
+
+  "tier_system": {
+    "tiers": [
+      {
+        "id": "gold",
+        "label": "Gold",
+        "threshold_min": 75,
+        "description": "Ambassador potential. Consistent quality, high qCPE, long-term content value.",
+        "next_action": "Propose ambassador program. Priority invite to all future campaigns.",
+        "compensation_model": {
+          "base": "Complimentary stay (premium unit, peak season)",
+          "performance_bonus": "% of bookings made with personal promo code (hybrid model)",
+          "rationale": "Research confirms hybrid base + KPI bonus is market direction. Financial stake maintains long-term engagement. Discount up to 38% on CAC with annual contracts."
+        }
+      },
+      {
+        "id": "silver",
+        "label": "Silver",
+        "threshold_min": 45,
+        "threshold_max": 74,
+        "description": "Good output, reusable content, room to grow.",
+        "next_action": "Invite to next campaign cycle. Consider upgrading deliverable expectations.",
+        "compensation_model": {
+          "base": "Complimentary stay + promo code",
+          "performance_bonus": "None at this stage",
+          "rationale": "Standard gifting model. Proven ROI entry format."
+        }
+      },
+      {
+        "id": "out",
+        "label": "Out",
+        "threshold_max": 44,
+        "description": "Low content quality, poor engagement, or misaligned audience.",
+        "next_action": "Archive in Attio. No further outreach. Document reason.",
+        "compensation_model": null
+      }
+    ]
+  },
+
+  "project_builder": {
+    "description": "Generates personalised story frames per influencer. Replaces generic briefs with narrative-first emotional prompts. Grounded in self-disclosure and parasocial psychology.",
+    "principle": "We reveal the influencer's individuality through our product — not the other way around. Frames are questions, not instructions.",
+    "campaign_scenarios": [
+      {"id": "couples", "label": "Romance / Couples"},
+      {"id": "birthday", "label": "Birthday / Celebration"},
+      {"id": "corporate", "label": "Corporate offsite"},
+      {"id": "family", "label": "Families"},
+      {"id": "wellness", "label": "Wellness / Retreat"},
+      {"id": "wedding", "label": "Weddings"},
+      {"id": "summit", "label": "Summit / Strategy session"},
+      {"id": "sport", "label": "Paddle tennis / Sport"}
+    ],
+    "personality_types": [
+      {"id": "adventurous", "label": "Adventurous / Explorer"},
+      {"id": "romantic", "label": "Romantic / Emotional"},
+      {"id": "aesthetic", "label": "Aesthetic / Visual"},
+      {"id": "family", "label": "Family-oriented"},
+      {"id": "wellness", "label": "Wellness / Mindful"},
+      {"id": "social", "label": "Social / Party"}
+    ],
+    "frames": {
+      "couples": {
+        "adventurous": [
+          "Imagine your partner surprised you with a night in the middle of nowhere — no city noise, just stars and fire. How would you feel in that moment?",
+          "What would you do if you had 48 hours completely to yourselves — no plans, no agenda?",
+          "If you could design the perfect romantic escape for two, what would it look like?"
+        ],
+        "romantic": [
+          "Think about the last time you felt completely present with your partner. What made it possible?",
+          "What does it feel like when the world disappears and it's just the two of you?",
+          "If love had a place — a physical space that matched how you feel — what would it look like?"
+        ],
+        "aesthetic": [
+          "What does the perfect light for a romantic moment look like to you?",
+          "If you were to capture intimacy in one image, what scene comes to mind?",
+          "Walk us through the aesthetic of your ideal couple's retreat."
+        ],
+        "default": [
+          "How would you react if someone organized a completely private escape for you and your partner?",
+          "What's the most romantic thing a place has ever made you feel?",
+          "Describe your ideal 'disappear from the world' moment with your person."
+        ]
+      },
+      "birthday": {
+        "adventurous": [
+          "What would your ideal 'disappear and celebrate' birthday look like?",
+          "If your closest people could take over one day for you — what would they plan?",
+          "What's the birthday experience you've never had but always wanted?"
+        ],
+        "social": [
+          "How do you like to celebrate — big energy or intimate?",
+          "What's the vibe of your perfect birthday — who's there, what's happening?",
+          "Describe the best birthday surprise you could imagine."
+        ],
+        "default": [
+          "If you could celebrate your birthday anywhere, with no limitations — what would it look like?",
+          "What does a meaningful birthday feel like to you, beyond the party?",
+          "How would you feel if your people pulled off a completely private celebration just for you?"
+        ]
+      },
+      "corporate": {
+        "default": [
+          "What does a team feel like when they're actually connecting — not just working?",
+          "What's missing from most corporate retreats that makes them feel forgettable?",
+          "If you could design one day that would change how your team sees each other, what would happen?"
+        ]
+      },
+      "family": {
+        "family": [
+          "What's the trip that would make your kids talk about it for years?",
+          "How do you find moments of real connection with your family in the noise of everyday?",
+          "If you could give your family one unforgettable memory this year — what would it be?"
+        ],
+        "default": [
+          "What does quality family time actually look like when everything slows down?",
+          "Describe the perfect off-grid family adventure — what's happening, who's there?",
+          "What makes a place feel safe and magical for kids and adults at the same time?"
+        ]
+      },
+      "wellness": {
+        "wellness": [
+          "What does it feel like when you finally stop and breathe — really breathe?",
+          "Describe your perfect reset. What does it look and feel like?",
+          "If rest had a place, what would that place be?"
+        ],
+        "default": [
+          "When was the last time you felt fully restored? What made that possible?",
+          "What does your mind and body need when they've had enough?",
+          "Design your ideal wellness retreat — what's essential, what's absent?"
+        ]
+      },
+      "wedding": {
+        "default": [
+          "What does the perfect wedding backdrop look like to you?",
+          "How do you imagine the transition from the ceremony to the celebration?",
+          "What feeling do you want guests to carry with them after the day ends?"
+        ]
+      },
+      "summit": {
+        "default": [
+          "What environment makes your best thinking happen?",
+          "What does a productive strategy session feel like when everything clicks?",
+          "How does space affect the quality of decisions your team makes?"
+        ]
+      },
+      "sport": {
+        "adventurous": [
+          "What does it feel like to compete somewhere unexpected — away from courts and crowds?",
+          "Describe your ideal sports weekend — where, who, what energy?",
+          "What makes a sports experience memorable beyond the game itself?"
+        ],
+        "default": [
+          "What would it feel like to play at a private court with nothing around you but nature?",
+          "How does the environment change the way you play and connect?",
+          "Describe your ultimate outdoor sports escape."
+        ]
+      }
+    }
+  },
+
+  "compliance": {
+    "ftc_disclosure": {
+      "required": true,
+      "rule": "All sponsored content and gifted stays must be disclosed. Federal FTC requirement — applies in all US states.",
+      "sc_specific": "South Carolina has no additional state-level influencer regulations beyond federal FTC standards. No extra compliance burden.",
+      "where_to_add": "Onboarding brief — mandatory checklist item before content is published.",
+      "accepted_formats": ["#ad", "#sponsored", "#gifted", "#partner", "Paid partnership label on Instagram"],
+      "manager_action": "Confirm disclosure presence before approving content in Review stage."
+    },
+    "minors": {
+      "note": "SC follows standard FTC rules. California AB 1880 / SB 764 (minor income protection) does not apply unless filming in CA. No action required for Patrick SC operations."
+    }
+  },
+
+  "candidate_examples": {
+    "note": "Real profiles from kone.vc — used to illustrate scoring model. Not an endorsement or confirmed partnership.",
+    "zone_a_candidates": [
+      {
+        "name": "South Carolina & Destination Photographer (Lina)",
+        "username": "takeashotphotography",
+        "email": "linaverovaya@outlook.com",
+        "platform": "instagram",
+        "followers": 5331,
+        "engagement_rate": 3.04,
+        "location": "South Carolina",
+        "geo_zone": "A",
+        "category": "nature_outdoor",
+        "content_focus": "weddings, engagements, couples, documentary/film style",
+        "estimated_score": 78,
+        "score_breakdown": {"geo": 35, "er": 15, "followers": 8, "relevance": 20},
+        "notes": "Strong couples + romantic content focus. SC-based. High relevance for Romance / Wedding scenarios. ER solid for the follower count. Film aesthetic aligns with Horizons visual identity.",
+        "suggested_scenario": "couples",
+        "suggested_personality": "romantic"
+      },
+      {
+        "name": "Caleb Nealey",
+        "username": "caleb.nealey",
+        "email": "nealey.caleb@gmail.com",
+        "platform": "instagram",
+        "followers": 38701,
+        "engagement_rate": 2.66,
+        "location": "Charlotte, NC",
+        "geo_zone": "A",
+        "category": "lifestyle",
+        "content_focus": "fashion, travel, live events",
+        "estimated_score": 72,
+        "score_breakdown": {"geo": 35, "er": 15, "followers": 20, "relevance": 2},
+        "notes": "Charlotte-based with solid following and events background. Lower keyword relevance to glamping/nature but lifestyle crossover. Could work for social/celebration scenarios. Worth outreach.",
+        "suggested_scenario": "birthday",
+        "suggested_personality": "social"
+      }
+    ],
+    "zone_b_candidates": [
+      {
+        "name": "Explore Athens",
+        "username": "exploreathens",
+        "email": "hello@exploreathens.online",
+        "platform": "instagram",
+        "followers": 9432,
+        "engagement_rate": 4.38,
+        "location": "Athens, Georgia",
+        "geo_zone": "B",
+        "category": "nature_outdoor",
+        "content_focus": "local storytelling, community, outdoor adventure",
+        "estimated_score": 64,
+        "score_breakdown": {"geo": 20, "er": 25, "followers": 8, "relevance": 11},
+        "notes": "Outstanding ER (4.38%) for the size. Community-driven storytelling mirrors Visit Salt Lake approach. Georgia audience — SE regional reach. Adventure / outdoor focus strong fit.",
+        "suggested_scenario": "wellness",
+        "suggested_personality": "adventurous"
+      },
+      {
+        "name": "Murfreesboro.com",
+        "username": "murfreesborotn",
+        "email": "news@murfreesboro.com",
+        "platform": "instagram",
+        "followers": 43950,
+        "engagement_rate": 2.05,
+        "location": "Murfreesboro, Tennessee",
+        "geo_zone": "B",
+        "category": "travel",
+        "content_focus": "local Tennessee community, family activities, travel",
+        "estimated_score": 55,
+        "score_breakdown": {"geo": 20, "er": 15, "followers": 20, "relevance": 0},
+        "notes": "Community platform with good reach. Family and local focus. Could work for Family or Corporate scenarios targeting TN audience. ER acceptable. Low glamping keyword density.",
+        "suggested_scenario": "family",
+        "suggested_personality": "family"
+      }
+    ],
+    "watch_list": [
+      {
+        "name": "Knoxville Moms",
+        "username": "knoxvillemoms",
+        "platform": "instagram",
+        "followers": 20700,
+        "engagement_rate": 0.42,
+        "location": "Knoxville, Tennessee",
+        "geo_zone": "B",
+        "estimated_score": 38,
+        "notes": "Strong glamping keyword hit and family focus but ER is very low (0.42%). Reaches 20k but audience is disengaged. Watch list — not priority outreach.",
+        "flag": "low_er"
+      }
+    ]
+  },
+
+  "workflow": {
+    "stages": [
+      {
+        "id": 0,
+        "label": "Candidate",
+        "attio_status": "candidate",
+        "checklist": [
+          "Verify follower count and ER",
+          "Check geo zone (A / B / C)",
+          "Review content quality and aesthetic fit",
+          "Confirm no brand conflicts",
+          "Add to Attio as Candidate"
+        ]
+      },
+      {
+        "id": 1,
+        "label": "Outreach",
+        "attio_status": "outreach",
+        "checklist": [
+          "Send initial DM / email using script",
+          "Follow up if no reply in 3 days",
+          "Log outreach date in Attio",
+          "Qualify: confirm interest and content capacity"
+        ],
+        "script_ref": "scripts.cold_outreach"
+      },
+      {
+        "id": 2,
+        "label": "Onboarding",
+        "attio_status": "active",
+        "checklist": [
+          "Send onboarding brief with story frames",
+          "Confirm deliverables and timeline",
+          "Set up personalised promo code (e.g. NAME15)",
+          "Confirm stay dates if applicable",
+          "Add FTC disclosure requirement to brief",
+          "Update Attio to Active"
+        ],
+        "script_ref": "scripts.onboarding",
+        "ftc_note": "Disclosure confirmation is mandatory before publishing. Add as checklist item in brief."
+      },
+      {
+        "id": 3,
+        "label": "In production",
+        "attio_status": "in_production",
+        "checklist": [
+          "Check in at day 3 of stay",
+          "Send midpoint encouragement message",
+          "Confirm content schedule and formats",
+          "Monitor early story posts if any"
+        ],
+        "script_ref": "scripts.midpoint_checkin"
+      },
+      {
+        "id": 4,
+        "label": "Review",
+        "attio_status": "review",
+        "checklist": [
+          "Collect all content assets",
+          "Review against deliverables checklist",
+          "Verify FTC disclosure present on all posts",
+          "Count saves, meaningful comments, link clicks (qCPE)",
+          "Log content quality score in panel",
+          "Flag reusable assets for long-term library"
+        ]
+      },
+      {
+        "id": 5,
+        "label": "Complete",
+        "attio_status": "complete",
+        "checklist": [
+          "Score iteration across all 4 axes (quality / value / longevity / qCPE)",
+          "Update tier in Attio",
+          "Send thank you + next steps message",
+          "Archive content with scenario and personality tags",
+          "Decide: Gold / Silver / Out"
+        ],
+        "script_ref": "scripts.closing"
+      }
+    ]
+  },
+
+  "attio_schema": {
+    "object": "People (influencer record)",
+    "fields": [
+      {"field": "name", "type": "text", "source": "kone.vc import"},
+      {"field": "username", "type": "text", "source": "kone.vc import"},
+      {"field": "email", "type": "email", "source": "kone.vc import"},
+      {"field": "platform", "type": "select", "options": ["instagram", "tiktok", "youtube"], "source": "kone.vc import"},
+      {"field": "followers", "type": "number", "source": "kone.vc import"},
+      {"field": "engagement_rate", "type": "number", "source": "kone.vc import"},
+      {"field": "location_raw", "type": "text", "source": "kone.vc import"},
+      {"field": "geo_zone", "type": "select", "options": ["A", "B", "C"], "source": "panel computed"},
+      {"field": "import_score", "type": "number", "source": "panel computed"},
+      {"field": "status", "type": "select", "options": ["candidate", "outreach", "active", "in_production", "review", "complete", "archived"], "source": "panel workflow"},
+      {"field": "current_campaign", "type": "text", "source": "panel project builder"},
+      {"field": "current_scenario", "type": "select", "options": ["couples", "birthday", "corporate", "family", "wellness", "wedding", "summit", "sport"], "source": "panel project builder"},
+      {"field": "affiliate_code", "type": "text", "source": "manual — format: NAME15"},
+      {"field": "ftc_disclosure_confirmed", "type": "boolean", "source": "manager review"},
+      {"field": "iterations_count", "type": "number", "source": "panel tier system"},
+      {"field": "avg_iteration_score", "type": "number", "source": "panel tier system"},
+      {"field": "tier", "type": "select", "options": ["Gold", "Silver", "Out", "Unrated"], "source": "panel tier system"},
+      {"field": "last_campaign", "type": "text", "source": "panel tier system"},
+      {"field": "qcpe_last_iteration", "type": "number", "source": "panel review stage"},
+      {"field": "content_library_assets", "type": "number", "source": "manual count"},
+      {"field": "notes", "type": "text", "source": "manual"}
+    ],
+    "sync_method": "Zapier (panel → Attio). Trigger: iteration saved or stage advanced.",
+    "sync_fields_on_iteration": ["status", "avg_iteration_score", "iterations_count", "tier", "last_campaign", "qcpe_last_iteration", "ftc_disclosure_confirmed"],
+    "sync_fields_on_import": ["name", "username", "email", "platform", "followers", "engagement_rate", "location_raw", "geo_zone", "import_score"]
+  },
+
+  "scripts": {
+    "note": "Script content to be authored separately in the existing scripts panel (3rd scenario: Influencers). These are structural stubs only.",
+    "cold_outreach": {
+      "channel": ["DM", "email"],
+      "goal": "Generate interest and qualify fit",
+      "key_beats": [
+        "Personal hook — reference their specific content style (not just follower count)",
+        "One-line brand intro — Horizons, Patrick SC, private glamping, 80min from Charlotte",
+        "Soft offer — complimentary stay, no hard ask yet",
+        "Simple CTA — are you open to hearing more?",
+        "Keep it under 4 lines — parasocial DMs feel casual, not corporate"
+      ]
+    },
+    "onboarding": {
+      "channel": ["email"],
+      "goal": "Brief the influencer without killing their creativity",
+      "key_beats": [
+        "Welcome + genuine excitement framing",
+        "Scenario context — what we're highlighting (e.g. couples escape, birthday)",
+        "Story frames — send as inspiration, explicitly NOT as a script",
+        "Deliverables and timeline",
+        "Personal promo code (NAME15 format)",
+        "FTC disclosure requirement — clear, non-intimidating",
+        "Point of contact and check-in schedule"
+      ]
+    },
+    "midpoint_checkin": {
+      "channel": ["DM"],
+      "goal": "Maintain energy, unlock more authentic content moments",
+      "key_beats": [
+        "Casual tone — not a status update request",
+        "Ask how they're feeling, not what they've posted",
+        "Encourage spontaneous moments over planned shots",
+        "Remind of any remaining deliverables naturally, not formally"
+      ]
+    },
+    "closing": {
+      "channel": ["email"],
+      "goal": "Close the loop and set up next cycle",
+      "key_beats": [
+        "Thank you — genuine, reference a specific content moment",
+        "Share a result if available (promo code bookings, saves count)",
+        "Tease next collaboration if Silver / Gold",
+        "For Gold: soft intro to ambassador concept and hybrid comp model"
+      ]
+    }
+  }
+}
