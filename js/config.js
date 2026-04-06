@@ -1,22 +1,32 @@
 // ============================================================
 // Horizons Influencer Panel — Configuration
-// Stored in localStorage, editable from Settings view
+// Build-time env vars (js/env.js) take priority over localStorage
 // ============================================================
+
+import { ENV } from './env.js';
 
 const CONFIG_KEY = 'horizons_config';
 
 const DEFAULTS = {
-  supabaseUrl: '',   // e.g. https://xxxx.supabase.co
-  supabaseKey: '',   // anon public key
-  attioWebhook: '',  // Zapier webhook URL → Attio
+  supabaseUrl:  '',
+  supabaseKey:  '',
+  attioWebhook: '',
 };
 
 export function getConfig() {
   try {
     const stored = localStorage.getItem(CONFIG_KEY);
-    return stored ? { ...DEFAULTS, ...JSON.parse(stored) } : { ...DEFAULTS };
+    const local = stored ? JSON.parse(stored) : {};
+    return {
+      ...DEFAULTS,
+      ...local,
+      // Build-time env always wins if set
+      ...(ENV.supabaseUrl  ? { supabaseUrl:  ENV.supabaseUrl }  : {}),
+      ...(ENV.supabaseKey  ? { supabaseKey:  ENV.supabaseKey }  : {}),
+      ...(ENV.attioWebhook ? { attioWebhook: ENV.attioWebhook } : {}),
+    };
   } catch {
-    return { ...DEFAULTS };
+    return { ...DEFAULTS, ...ENV };
   }
 }
 
