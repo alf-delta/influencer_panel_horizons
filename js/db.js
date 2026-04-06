@@ -3,7 +3,7 @@
 // ============================================================
 
 import { getConfig } from './config.js';
-import { computeGeoZone, computeImportScore, computeIterationScore, recalcTierData, generateAffiliateCode } from './scoring.js';
+import { computeGeoZone, computeImportScore, computeReviewScore, recalcTierData, generateAffiliateCode } from './scoring.js';
 import { sendAttioEvent } from './attio.js';
 
 let _supabase = null;
@@ -180,7 +180,11 @@ export async function getIterations(influencerId) {
 }
 
 export async function createIteration(influencerId, form) {
-  const total_score = computeIterationScore(form);
+  const total_score = computeReviewScore({
+    technical:     form.technical,
+    communication: form.communication,
+    horizons_fit:  form.horizons_fit,
+  });
 
   // Insert iteration
   const { data: iter, error: iterErr } = await db()
@@ -188,11 +192,10 @@ export async function createIteration(influencerId, form) {
     .insert({
       influencer_id: influencerId,
       campaign_name: form.campaign_name || '',
-      scenario: form.scenario || '',
-      content_quality: Number(form.content_quality),
-      value_received: Number(form.value_received),
-      content_longevity: Number(form.content_longevity),
-      qcpe_score: Number(form.qcpe_score),
+      scenario:      form.scenario || '',
+      technical:     Number(form.technical),
+      communication: Number(form.communication),
+      horizons_fit:  Number(form.horizons_fit),
       total_score,
       notes: form.notes || '',
     })
@@ -217,7 +220,6 @@ export async function createIteration(influencerId, form) {
     iterations_count,
     avg_iteration_score,
     tier,
-    qcpe_last_iteration: Number(form.qcpe_score),
     last_campaign: form.campaign_name || '',
   });
 

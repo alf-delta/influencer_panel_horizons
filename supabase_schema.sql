@@ -37,6 +37,11 @@ create table if not exists iterations (
   influencer_id    uuid references influencers(id) on delete cascade,
   campaign_name    text,
   scenario         text,
+  -- New 3-block scoring system (Technical 35% / Communication 25% / Horizons Fit 40%)
+  technical        integer check (technical between 1 and 10),
+  communication    integer check (communication between 1 and 10),
+  horizons_fit     integer check (horizons_fit between 1 and 10),
+  -- Legacy 4-axis fields (kept for existing rows)
   content_quality  integer check (content_quality between 0 and 10) default 0,
   value_received   integer check (value_received between 0 and 10) default 0,
   content_longevity integer check (content_longevity between 0 and 10) default 0,
@@ -45,6 +50,11 @@ create table if not exists iterations (
   notes            text,
   created_at       timestamptz default now()
 );
+
+-- Migration: add new columns to existing iterations table
+alter table iterations add column if not exists technical     integer check (technical between 1 and 10);
+alter table iterations add column if not exists communication integer check (communication between 1 and 10);
+alter table iterations add column if not exists horizons_fit  integer check (horizons_fit between 1 and 10);
 
 -- Attio webhook sync log
 create table if not exists attio_sync_log (

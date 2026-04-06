@@ -4,7 +4,7 @@
 // ============================================================
 
 import { getInfluencer, getIterations, createIteration, updateInfluencer, advanceStage, archiveInfluencer } from '../db.js';
-import { computeIterationScore, STAGE_ORDER, STAGE_LABELS, STAGE_CHECKLISTS } from '../scoring.js';
+import { computeReviewScore, computeReviewTier, STAGE_ORDER, STAGE_LABELS, STAGE_CHECKLISTS } from '../scoring.js';
 import { SCENARIOS, PERSONALITIES, getFrames, getScenarioLabel, getPersonalityLabel } from '../frames.js';
 import { avatar, avatarInitials, tierBadge, zoneBadge, platformBadge, statusBadge, scoreBar, toast, openModal, closeModal } from '../ui.js';
 
@@ -259,7 +259,15 @@ function renderIterations(body, inf, iterations, callbacks) {
           <div style="font-size:22px;font-weight:700;color:var(--navy)">${iter.total_score}</div>
         </div>
         <div class="iteration-axes">
-          ${[
+          ${iter.technical != null ? [
+            ['Technical (35%)', iter.technical],
+            ['Communication (25%)', iter.communication],
+            ['Horizons Fit (40%)', iter.horizons_fit],
+          ].map(([label, val]) => `
+            <div class="iteration-axis">
+              <span class="iteration-axis-label">${label}</span>
+              <span class="iteration-axis-val">${val}/10</span>
+            </div>`).join('') : [
             ['Content Quality', iter.content_quality],
             ['Value Received', iter.value_received],
             ['Longevity', iter.content_longevity],
@@ -270,6 +278,7 @@ function renderIterations(body, inf, iterations, callbacks) {
               <span class="iteration-axis-val">${val}/10</span>
             </div>`).join('')}
         </div>
+        ${(() => { const r = iter.technical != null ? computeReviewTier({ technical: iter.technical, communication: iter.communication, horizons_fit: iter.horizons_fit }) : null; return r && r.border ? '<div style="margin-top:8px;font-size:11px;color:var(--gold);font-weight:600">⚠ Border case — committee review</div>' : ''; })()}
         ${iter.notes ? `<div class="text-sm text-muted" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--divider)">${iter.notes}</div>` : ''}
       </div>`).join('')
       : '<div class="text-muted text-sm" style="padding:20px 0">No iterations yet.</div>'}`;
@@ -280,7 +289,13 @@ function renderIterations(body, inf, iterations, callbacks) {
 }
 
 function showIterationModal(inf, callbacks) {
-  let vals = { content_quality: 5, value_received: 5, content_longevity: 5, qcpe_score: 5 };
+  let vals = { technical: 5, communication: 5, horizons_fit: 5 };
+
+  const AXES = [
+    { id: 'technical',      label: 'Technical',       weight: '35%', hint: 'Content quality, cinematography, editing, reach, production value' },
+    { id: 'communication',  label: 'Communication',   weight: '25%', hint: 'Responsiveness, flexibility, professionalism, team collaboration' },
+    { id: 'horizons_fit',   label: 'Horizons Fit',    weight: '40%', hint: 'How well the content hits Horizons brand narrative and emotion' },
+  ];
 
   openModal(`
     <div class="modal-header">
@@ -302,28 +317,30 @@ function showIterationModal(inf, callbacks) {
         </div>
       </div>
 
-      <div class="section-title" style="margin-bottom:14px">Score Axes (0–10 each)</div>
+      <div class="section-title" style="margin-bottom:14px">Score blocks (1–10 each)</div>
 
-      ${[
-        { id: 'content_quality',   label: 'Content Quality',  hint: 'Visual quality, narrative depth, originality, emotional resonance' },
-        { id: 'value_received',    label: 'Value Received',   hint: 'Reach, saves, shares, traffic, booking inquiries' },
-        { id: 'content_longevity', label: 'Content Longevity',hint: 'Is the content reusable? Does it hold value over time?' },
-        { id: 'qcpe_score',        label: 'qCPE Score',       hint: 'Saves, meaningful comments, link clicks, DM inquiries' },
-      ].map(ax => `
-        <div style="margin-bottom:16px">
+      ${AXES.map(ax => `
+        <div style="margin-bottom:18px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
             <div>
-              <div class="form-label" style="margin-bottom:1px">${ax.label}</div>
+              <div style="display:flex;align-items:baseline;gap:6px">
+                <div class="form-label" style="margin-bottom:1px">${ax.label}</div>
+                <span style="font-size:11px;color:var(--text-muted);font-weight:500">${ax.weight}</span>
+              </div>
               <div class="form-hint">${ax.hint}</div>
             </div>
             <div class="slider-val" id="val-${ax.id}">5</div>
           </div>
-          <input type="range" min="0" max="10" step="1" value="5" id="slider-${ax.id}" data-axis="${ax.id}">
+          <input type="range" min="1" max="10" step="1" value="5" id="slider-${ax.id}" data-axis="${ax.id}">
         </div>`).join('')}
 
-      <div class="iteration-score-preview">
-        <span class="score-preview-label">Iteration Score</span>
-        <span class="score-preview-val" id="iter-score-preview">50.0</span>
+      <div class="iteration-score-preview" id="iter-preview-block">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="score-preview-label">Weighted Score</span>
+          <span class="score-preview-val" id="iter-score-preview">6.75</span>
+        </div>
+        <div id="iter-tier-preview" style="margin-top:6px;font-size:13px;font-weight:600;color:var(--gold)">Silver</div>
+        <div id="iter-warning-preview" style="margin-top:4px;font-size:11px;display:none"></div>
       </div>
 
       <div class="form-group" style="margin-top:16px">
@@ -336,21 +353,40 @@ function showIterationModal(inf, callbacks) {
       <button class="btn btn-gold" id="btn-save-iter">Save Iteration</button>
     </div>`);
 
-  // Live slider updates
-  ['content_quality','value_received','content_longevity','qcpe_score'].forEach(ax => {
-    const slider = document.getElementById(`slider-${ax}`);
-    const valEl  = document.getElementById(`val-${ax}`);
+  function updatePreview() {
+    const { tier, score, border, veto } = computeReviewTier(vals);
+    document.getElementById('iter-score-preview').textContent = veto ? '—' : score;
+
+    const tierEl = document.getElementById('iter-tier-preview');
+    const tierColors = { Gold: 'var(--gold)', Silver: '#aaa', Bronze: '#cd7f32', 'Not Rated': 'var(--danger)' };
+    tierEl.textContent = tier;
+    tierEl.style.color = tierColors[tier] || 'var(--text)';
+
+    const warnEl = document.getElementById('iter-warning-preview');
+    if (veto) {
+      warnEl.style.display = 'block';
+      warnEl.style.color = 'var(--danger)';
+      warnEl.textContent = 'Hard Veto: one or more blocks below 4 — result is Not Rated';
+    } else if (border) {
+      warnEl.style.display = 'block';
+      warnEl.style.color = 'var(--gold)';
+      warnEl.textContent = '⚠ Border case — flag for committee review';
+    } else {
+      warnEl.style.display = 'none';
+    }
+  }
+
+  AXES.forEach(ax => {
+    const slider = document.getElementById(`slider-${ax.id}`);
+    const valEl  = document.getElementById(`val-${ax.id}`);
     slider.addEventListener('input', () => {
-      vals[ax] = Number(slider.value);
+      vals[ax.id] = Number(slider.value);
       valEl.textContent = slider.value;
       updatePreview();
     });
   });
 
-  function updatePreview() {
-    const score = computeIterationScore(vals);
-    document.getElementById('iter-score-preview').textContent = score;
-  }
+  updatePreview();
 
   document.getElementById('btn-save-iter').addEventListener('click', async () => {
     const btn = document.getElementById('btn-save-iter');
@@ -358,13 +394,12 @@ function showIterationModal(inf, callbacks) {
     btn.textContent = 'Saving…';
     try {
       const result = await createIteration(inf.id, {
-        campaign_name:    document.getElementById('iter-campaign').value.trim(),
-        scenario:         document.getElementById('iter-scenario').value,
-        content_quality:  vals.content_quality,
-        value_received:   vals.value_received,
-        content_longevity:vals.content_longevity,
-        qcpe_score:       vals.qcpe_score,
-        notes:            document.getElementById('iter-notes').value.trim(),
+        campaign_name: document.getElementById('iter-campaign').value.trim(),
+        scenario:      document.getElementById('iter-scenario').value,
+        technical:     vals.technical,
+        communication: vals.communication,
+        horizons_fit:  vals.horizons_fit,
+        notes:         document.getElementById('iter-notes').value.trim(),
       });
       toast(`Iteration saved · Score: ${result.iteration.total_score} · Tier: ${result.influencer.tier}`, 'success');
       closeModal();

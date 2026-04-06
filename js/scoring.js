@@ -92,30 +92,70 @@ export function computeImportScore({ geo_zone, engagement_rate, followers, conte
   return Math.min(score, 100);
 }
 
-// Returns 0–100 from 4 axes (0–10 each)
-export function computeIterationScore({ content_quality, value_received, content_longevity, qcpe_score }) {
+// ── Review scoring (new system) ──────────────────────────────
+// Three blocks: technical (35%), communication (25%), horizons_fit (40%)
+// Each block: 1–10 slider
+// Hard Veto: any block < 4 → Not Rated regardless of score
+// Border Case: ±0.3 from any threshold → flag for committee
+
+export function computeReviewScore({ technical, communication, horizons_fit }) {
+  const t = Number(technical)      || 0;
+  const c = Number(communication)  || 0;
+  const h = Number(horizons_fit)   || 0;
+  return parseFloat((t * 0.35 + c * 0.25 + h * 0.40).toFixed(2));
+}
+
+export function computeReviewTier({ technical, communication, horizons_fit }) {
+  const t = Number(technical)      || 0;
+  const c = Number(communication)  || 0;
+  const h = Number(horizons_fit)   || 0;
+
+  // Hard Veto
+  if (t < 4 || c < 4 || h < 4) return { tier: 'Not Rated', border: false, veto: true };
+
+  const score = computeReviewScore({ technical, communication, horizons_fit });
+
+  // Border case check (±0.3 from thresholds 8.0, 6.0, 4.0)
+  const THRESHOLDS = [8.0, 6.0, 4.0];
+  const border = THRESHOLDS.some(t => Math.abs(score - t) <= 0.3);
+
+  let tier;
+  if (score >= 8.0)      tier = 'Gold';
+  else if (score >= 6.0) tier = 'Silver';
+  else if (score >= 4.0) tier = 'Bronze';
+  else                   tier = 'Not Rated';
+
+  return { tier, score, border, veto: false };
+}
+
+// Legacy iteration score (kept for backwards compat)
+export function computeIterationScore({ technical, communication, horizons_fit, content_quality, value_received, content_longevity, qcpe_score }) {
+  // New fields take priority
+  if (technical !== undefined || communication !== undefined || horizons_fit !== undefined) {
+    return computeReviewScore({ technical, communication, horizons_fit });
+  }
+  // Old 4-axis fallback
   const sum = (Number(content_quality) || 0)
             + (Number(value_received) || 0)
             + (Number(content_longevity) || 0)
             + (Number(qcpe_score) || 0);
-  return parseFloat(((sum / 40) * 100).toFixed(1));
+  return parseFloat(((sum / 40) * 10).toFixed(2));
 }
 
-// Returns 'Gold' | 'Silver' | 'Out' | 'Unrated'
+// Returns 'Gold' | 'Silver' | 'Bronze' | 'Not Rated' | 'Unrated'
 export function computeTier(avgScore, iterationsCount) {
   if (!iterationsCount || iterationsCount === 0) return 'Unrated';
-  if (avgScore >= 75 && iterationsCount >= 2) return 'Gold';
-  if (avgScore >= 45) return 'Silver';
-  return 'Out';
+  if (avgScore >= 8.0) return 'Gold';
+  if (avgScore >= 6.0) return 'Silver';
+  if (avgScore >= 4.0) return 'Bronze';
+  return 'Not Rated';
 }
 
 // Recalculates avg_score and tier after adding a new iteration
-// existingIterations: array of { total_score }
-// newScore: number
 export function recalcTierData(existingIterations, newScore) {
   const allScores = [...existingIterations.map(i => Number(i.total_score)), newScore];
   const count = allScores.length;
-  const avg = parseFloat((allScores.reduce((a, b) => a + b, 0) / count).toFixed(1));
+  const avg = parseFloat((allScores.reduce((a, b) => a + b, 0) / count).toFixed(2));
   return {
     iterations_count: count,
     avg_iteration_score: avg,
