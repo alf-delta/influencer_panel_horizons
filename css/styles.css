@@ -70,10 +70,18 @@ input, textarea, select { font-family: var(--font); }
 
 .sidebar-brand {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
   padding: 20px 16px 16px;
   border-bottom: 1px solid var(--sidebar-border);
+}
+
+.sidebar-logo {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .nav-item-logo {
