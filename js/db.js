@@ -93,8 +93,25 @@ export async function createInfluencer(raw) {
   return data;
 }
 
+export async function getExistingUsernames() {
+  const { data } = await db().from('influencers').select('username,platform');
+  const set = new Set();
+  (data || []).forEach(r => set.add(`${(r.platform || 'instagram').toLowerCase()}:${(r.username || '').toLowerCase()}`));
+  return set;
+}
+
 export async function bulkCreateInfluencers(rows) {
-  const records = rows.map(raw => {
+  // Fetch existing to skip real duplicates
+  const existing = await getExistingUsernames();
+
+  const newRows = rows.filter(r =>
+    !existing.has(`${(r.platform || 'instagram').toLowerCase()}:${(r.username || '').toLowerCase()}`)
+  );
+  const skipped = rows.length - newRows.length;
+
+  if (!newRows.length) return { created: 0, skipped };
+
+  const records = newRows.map(raw => {
     const geo_zone = computeGeoZone(raw.location_raw || raw.location || '');
     const contentText = [raw.category, raw.bio_keywords, raw.username, raw.name].filter(Boolean).join(' ');
     const import_score = computeImportScore({
@@ -123,9 +140,8 @@ export async function bulkCreateInfluencers(rows) {
   const { data, error } = await db().from('influencers').insert(records).select();
   if (error) throw error;
 
-  // Fire Attio for each in background
   (data || []).forEach(inf => sendAttioEvent('import', inf).catch(() => {}));
-  return data || [];
+  return { created: (data || []).length, skipped };
 }
 
 export async function updateInfluencer(id, updates) {

@@ -2,7 +2,7 @@
 // Horizons Influencer Panel — kone.vc AI Search View
 // ============================================================
 
-import { bulkCreateInfluencers } from '../db.js';
+import { bulkCreateInfluencers, getExistingUsernames } from '../db.js';
 import { avatar, platformBadge, zoneBadge, toast } from '../ui.js';
 import { computeGeoZone, computeImportScore } from '../scoring.js';
 
@@ -252,7 +252,7 @@ async function runSearch(navigate) {
       return;
     }
 
-    renderResults(data.contacts, navigate);
+    await renderResults(data.contacts, navigate);
 
   } catch (err) {
     showEmpty(`Error: ${err.message}`);
@@ -265,8 +265,11 @@ async function runSearch(navigate) {
 
 // ── Results table ──────────────────────────────────────────
 
-function renderResults(contacts, navigate) {
+async function renderResults(contacts, navigate) {
   showState('results');
+
+  let existingSet = new Set();
+  try { existingSet = await getExistingUsernames(); } catch { /* offline — skip */ }
 
   const scored = contacts.map(c => {
     const geo_zone     = computeGeoZone(c.location || '');
@@ -276,7 +279,9 @@ function renderResults(contacts, navigate) {
       followers:       c.followers || 0,
       content_text:    `${c.category || ''} ${c.description || ''}`,
     });
-    return { ...c, geo_zone, import_score };
+    const key = `${(c.platform || 'instagram').toLowerCase()}:${(c.username || '').toLowerCase()}`;
+    const already_added = existingSet.has(key);
+    return { ...c, geo_zone, import_score, already_added };
   });
 
   // Sort by score descending
@@ -309,9 +314,24 @@ function renderResults(contacts, navigate) {
           <th style="${th('right')}">ER %</th>
           <th style="${th('right')}">Score</th>
         </tr></thead>
-        <tbody>${scored.map((c, i) => rowHtml(c, i)).join('')}</tbody>
+        <tbody>${scored.map((c, i) => rowHtml(c, i)).join('')}
+        <tr id="dupes-summary" style="display:none"><td colspan="8" style="padding:8px 10px;font-size:12px;color:var(--muted);text-align:center"></td></tr>
       </table>
     </div>`;
+
+  // Uncheck already-added rows
+  scored.forEach((c, i) => {
+    if (c.already_added) {
+      const cb = document.querySelector(`.row-check[data-idx="${i}"]`);
+      if (cb) cb.checked = false;
+    }
+  });
+  const dupeCount = scored.filter(c => c.already_added).length;
+  if (dupeCount) {
+    const row = document.getElementById('dupes-summary');
+    row.style.display = '';
+    row.querySelector('td').textContent = `${dupeCount} already in panel — unchecked automatically`;
+  }
 
   // Select-all
   const syncAll = checked => document.querySelectorAll('.row-check').forEach(cb => cb.checked = checked);
@@ -336,14 +356,18 @@ function rowHtml(c, i) {
   const locStr = c.location || '<span class="text-muted">no city listed</span>';
   const scoreColor = c.import_score >= 75 ? 'var(--success)'
                    : c.import_score >= 45 ? 'var(--gold)' : 'var(--muted)';
+  const rowStyle = c.already_added ? 'opacity:.55;background:var(--divider)' : '';
 
-  return `<tr>
+  return `<tr style="${rowStyle}">
     <td style="${td()}"><input type="checkbox" class="row-check" data-idx="${i}" checked></td>
     <td style="${td()}">
       <div style="display:flex;align-items:center;gap:9px">
         ${avatar(c.name || '', c.username || '', 'sm', c.platform)}
         <div>
-          <div style="font-weight:500">${esc(c.name || '—')}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-weight:500">${esc(c.name || '—')}</span>
+            ${c.already_added ? '<span style="font-size:10px;font-weight:600;color:var(--muted);background:var(--card-border);border-radius:4px;padding:1px 5px">IN PANEL</span>' : ''}
+          </div>
           <div class="text-muted text-xs">@${esc(c.username || '—')}</div>
         </div>
       </div>
