@@ -11,6 +11,7 @@ import { render as renderPipeline }   from './views/pipeline.js';
 import { render as renderCandidates } from './views/candidates.js';
 import { render as renderSettings }   from './views/settings.js';
 import { render as renderSearch }      from './views/search.js';
+import { render as renderGuide }       from './views/guide.js';
 import { open as openInfluencerDrawer, closeDrawer } from './views/influencer.js';
 
 // ---- State ----
@@ -197,6 +198,10 @@ function renderView(view, opts = {}) {
 
     case 'search':
       renderSearch(container, callbacks);
+      break;
+
+    case 'guide':
+      renderGuide(container);
       break;
 
     case 'settings':
