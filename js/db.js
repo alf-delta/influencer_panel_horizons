@@ -43,6 +43,7 @@ export async function getInfluencers(filters = {}) {
   if (filters.geo_zone) q = q.eq('geo_zone', filters.geo_zone);
   if (filters.platform) q = q.eq('platform', filters.platform);
   if (filters.search)   q = q.ilike('name', `%${filters.search}%`);
+  if (filters.location) q = q.ilike('location_raw', `%${filters.location}%`);
 
   const { data, error } = await q;
   if (error) throw error;

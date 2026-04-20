@@ -27,6 +27,18 @@ export async function render(container, { openInfluencer, openId }) {
           <option value="">All tiers</option>
           <option>Gold</option><option>Silver</option><option>Out</option><option>Unrated</option>
         </select>
+        <select class="filter-select" id="f-location">
+          <option value="">All locations</option>
+          <option value="South Carolina">South Carolina</option>
+          <option value="Texas">Texas</option>
+          <option value="California">California</option>
+          <option value="Tennessee">Tennessee</option>
+          <option value="Ohio">Ohio</option>
+          <option value="North Carolina">North Carolina</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Florida">Florida</option>
+          <option value="New York">New York</option>
+        </select>
         <select class="filter-select" id="f-zone">
           <option value="">All zones</option>
           <option value="A">Zone A</option><option value="B">Zone B</option><option value="C">Zone C</option>
@@ -267,6 +279,7 @@ function bindFilterEvents(container, openInfluencer) {
       geo_zone: container.querySelector('#f-zone').value || undefined,
       platform: container.querySelector('#f-platform').value || undefined,
       status:   container.querySelector('#f-status').value || undefined,
+      location: container.querySelector('#f-location').value || undefined,
     };
     loadTable(container, openInfluencer);
   };
@@ -277,7 +290,7 @@ function bindFilterEvents(container, openInfluencer) {
     debounce = setTimeout(applyFilters, 300);
   });
 
-  ['#f-tier','#f-zone','#f-platform','#f-status'].forEach(id => {
+  ['#f-tier','#f-zone','#f-platform','#f-status','#f-location'].forEach(id => {
     container.querySelector(id).addEventListener('change', applyFilters);
   });
 }
