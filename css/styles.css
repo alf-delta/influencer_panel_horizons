@@ -2239,3 +2239,27 @@ input[type="range"]::-webkit-slider-thumb:hover {
     gap: 6px;
   }
 }
+
+/* ── Brief tab ───────────────────────────────────────────── */
+
+.brief-deliverable {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  background: var(--white);
+  transition: background .15s, border-color .15s;
+}
+
+.brief-deliverable.checked {
+  background: #F0FDF4;
+  border-color: #BBF7D0;
+}
+
+.brief-deliverable input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+}

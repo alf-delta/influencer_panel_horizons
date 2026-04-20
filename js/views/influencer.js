@@ -4,9 +4,9 @@
 // ============================================================
 
 import { getInfluencer, getIterations, createIteration, updateInfluencer, advanceStage, archiveInfluencer } from '../db.js';
-import { computeReviewScore, computeReviewTier, STAGE_ORDER, STAGE_LABELS, STAGE_CHECKLISTS } from '../scoring.js';
-import { SCENARIOS, PERSONALITIES, getFrames, getScenarioLabel, getPersonalityLabel } from '../frames.js';
-import { avatar, avatarInitials, tierBadge, zoneBadge, platformBadge, statusBadge, scoreBar, toast, openModal, closeModal } from '../ui.js';
+import { computeReviewTier, STAGE_ORDER, STAGE_LABELS, STAGE_CHECKLISTS } from '../scoring.js';
+import { SCENARIOS, PERSONALITIES, getFrames, getScenarioLabel } from '../frames.js';
+import { avatar, tierBadge, zoneBadge, platformBadge, statusBadge, scoreBar, toast, openModal, closeModal } from '../ui.js';
 
 let _activeTab = 'overview';
 
@@ -67,6 +67,7 @@ function renderDrawer(drawer, inf, iterations, callbacks) {
       <button class="tab ${_activeTab==='iterations'?'active':''}" data-tab="iterations">
         Iterations ${iterations.length ? `<span style="margin-left:4px;background:var(--divider);border-radius:8px;padding:1px 6px;font-size:10px">${iterations.length}</span>` : ''}
       </button>
+      <button class="tab ${_activeTab==='brief'?'active':''}" data-tab="brief">Brief</button>
       <button class="tab ${_activeTab==='frames'?'active':''}" data-tab="frames">Story Frames</button>
       <button class="tab ${_activeTab==='compliance'?'active':''}" data-tab="compliance">Compliance</button>
     </div>
@@ -89,6 +90,7 @@ function renderDrawer(drawer, inf, iterations, callbacks) {
 function renderTab(body, inf, iterations, callbacks) {
   if (_activeTab === 'overview')    renderOverview(body, inf, callbacks);
   if (_activeTab === 'iterations')  renderIterations(body, inf, iterations, callbacks);
+  if (_activeTab === 'brief')       renderBrief(body, inf);
   if (_activeTab === 'frames')      renderFrames(body, inf);
   if (_activeTab === 'compliance')  renderCompliance(body, inf, callbacks);
 }
@@ -410,6 +412,108 @@ function showIterationModal(inf, callbacks) {
       btn.disabled = false;
       btn.textContent = 'Save Iteration';
     }
+  });
+}
+
+// ---- Brief Tab ----
+
+const DELIVERABLES = [
+  { id: 'first_impressions', label: 'First Impressions', desc: 'Capture videos/photos upon arrival to showcase the initial reaction' },
+  { id: 'property_tour',     label: 'Tour the Property', desc: 'Highlight key features: cabins, pool, sauna, pond, and all other amenities' },
+  { id: 'morning_routine',   label: 'Morning Routine',   desc: 'Waking up in the cabin, enjoying the sunrise, walking around, eating breakfast' },
+  { id: 'relaxation_fun',    label: 'Relaxation & Fun',  desc: 'Pool, sauna, pond, bikes, table tennis, and other activities' },
+  { id: 'dinner_prep',       label: 'Dinner Prep',       desc: 'Document the process of preparing dinner' },
+  { id: 'raw_materials',     label: 'Raw Materials',     desc: 'Raw footage of all 5 items above — delivered to our content manager for future posts' },
+  { id: 'main_reel',         label: 'Main Reel',         desc: '1 comprehensive reel + 1 TikTok + 1 YouTube Short + Instagram Stories tagging us. Main topic: set in Direction field below' },
+];
+
+function renderBrief(body, inf) {
+  const checked  = Array.isArray(inf.deliverables) ? inf.deliverables : [];
+  const direction = inf.content_direction || '';
+
+  body.innerHTML = `
+    <div class="section">
+      <div class="section-title" style="margin-bottom:10px">Important Note</div>
+      <div style="background:#FFFBEB;border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text)">
+        Please ensure the content includes <strong>people</strong> to highlight joyful experiences and vibrant moments. Film activities — sports, relaxing, exploring nature, biking, table tennis. Capture wildlife, scenic paths, and peaceful surroundings.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" style="margin-bottom:12px">Deliverables Checklist</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${DELIVERABLES.map(d => `
+          <label class="brief-deliverable ${checked.includes(d.id) ? 'checked' : ''}" style="cursor:pointer">
+            <input type="checkbox" class="brief-cb" data-id="${d.id}" ${checked.includes(d.id) ? 'checked' : ''} style="flex-shrink:0;margin-top:2px">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)">${d.label}</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5">${d.desc}</div>
+            </div>
+          </label>`).join('')}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" style="margin-bottom:8px">Direction / Main Topic</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Set the main topic for the comprehensive reel. Content planners fill this in per campaign.</div>
+      <textarea class="input" id="brief-direction" rows="3" placeholder="e.g. Relaxation & wellness getaway · Couples retreat · Birthday celebration…">${direction}</textarea>
+      <button class="btn btn-primary btn-sm" id="btn-save-direction" style="margin-top:8px">Save Direction</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title" style="margin-bottom:10px">Timeline</div>
+      <div style="font-size:13px;line-height:1.7;color:var(--text)">
+        Provide and post all materials <strong>within 3 days after departure</strong> via Google Drive or Dropbox folder — mark Horizons as <strong>Editor</strong>.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" style="margin-bottom:10px">Social Tags</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:13px"><span style="color:var(--muted);width:80px;display:inline-block">Instagram</span> <strong>@gohorizons</strong> <button class="btn btn-ghost btn-xs copy-tag" data-val="@gohorizons" style="margin-left:6px;font-size:11px;padding:2px 8px">Copy</button></div>
+        <div style="font-size:13px"><span style="color:var(--muted);width:80px;display:inline-block">TikTok</span> <strong>@horizonsgetaways</strong> <button class="btn btn-ghost btn-xs copy-tag" data-val="@horizonsgetaways" style="margin-left:6px;font-size:11px;padding:2px 8px">Copy</button></div>
+        <div style="font-size:13px"><span style="color:var(--muted);width:80px;display:inline-block">Facebook</span> <button class="btn btn-ghost btn-xs copy-tag" data-val="https://www.facebook.com/share/12A7DjbQPAy/?mibextid=wwXIfr" style="font-size:11px;padding:2px 8px">Copy link</button></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" style="margin-bottom:10px">Review Platforms</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.8">
+        Ask guests to leave a review on: <strong>Facebook · Google · Tripadvisor · Yelp</strong>
+      </div>
+      <a href="https://www.google.com/maps/place/Horizons+Sandhills/@34.6049918,-80.1000901,17z" target="_blank" style="font-size:12px;color:var(--accent);margin-top:4px;display:inline-block">Google Maps link →</a>
+    </div>`;
+
+  // Save deliverable checkboxes on change
+  body.querySelectorAll('.brief-cb').forEach(cb => {
+    cb.addEventListener('change', async () => {
+      const newChecked = [...body.querySelectorAll('.brief-cb:checked')].map(c => c.dataset.id);
+      cb.closest('.brief-deliverable').classList.toggle('checked', cb.checked);
+      try {
+        await updateInfluencer(inf.id, { deliverables: newChecked });
+        inf.deliverables = newChecked;
+      } catch (err) { toast(err.message, 'error'); }
+    });
+  });
+
+  // Save direction
+  body.querySelector('#btn-save-direction').addEventListener('click', async () => {
+    const val = body.querySelector('#brief-direction').value.trim();
+    try {
+      await updateInfluencer(inf.id, { content_direction: val });
+      inf.content_direction = val;
+      toast('Direction saved', 'success');
+    } catch (err) { toast(err.message, 'error'); }
+  });
+
+  // Copy tags
+  body.querySelectorAll('.copy-tag').forEach(btn => {
+    btn.addEventListener('click', () => {
+      navigator.clipboard?.writeText(btn.dataset.val);
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
   });
 }
 
