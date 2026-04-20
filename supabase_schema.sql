@@ -56,6 +56,10 @@ alter table iterations add column if not exists technical     integer check (tec
 alter table iterations add column if not exists communication integer check (communication between 1 and 10);
 alter table iterations add column if not exists horizons_fit  integer check (horizons_fit between 1 and 10);
 
+-- Migration: stay dates for calendar
+alter table influencers add column if not exists stay_start date;
+alter table influencers add column if not exists stay_end   date;
+
 -- Migration: content brief fields on influencers
 alter table influencers add column if not exists deliverables       jsonb default '[]';
 alter table influencers add column if not exists content_direction  text;

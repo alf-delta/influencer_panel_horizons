@@ -165,6 +165,23 @@ function renderOverview(body, inf, callbacks) {
       </div>` : ''}
 
     <div class="section">
+      <div class="section-title">Stay Dates</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+          <div class="form-label" style="margin-bottom:4px">Check-in</div>
+          <input type="date" class="input" id="stay-start" value="${inf.stay_start || ''}" style="width:145px">
+        </div>
+        <div style="color:var(--muted);margin-top:18px">→</div>
+        <div>
+          <div class="form-label" style="margin-bottom:4px">Check-out</div>
+          <input type="date" class="input" id="stay-end" value="${inf.stay_end || ''}" style="width:145px">
+        </div>
+        <button class="btn btn-outline btn-sm" id="btn-save-stay" style="margin-top:18px">Save</button>
+        ${inf.stay_start ? `<button class="btn btn-ghost btn-sm" id="btn-clear-stay" style="margin-top:18px;color:var(--muted)">Clear</button>` : ''}
+      </div>
+    </div>
+
+    <div class="section">
       <div class="section-title">Actions</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px">
         ${!isArchived && stageIdx < STAGE_ORDER.length - 1 ? `
@@ -196,6 +213,26 @@ function renderOverview(body, inf, callbacks) {
       toast(`${inf.name} archived`, 'info');
       closeDrawer(callbacks.onClose);
       callbacks.onRefresh?.();
+    } catch (err) { toast(err.message, 'error'); }
+  });
+
+  // Stay dates
+  body.querySelector('#btn-save-stay')?.addEventListener('click', async () => {
+    const start = body.querySelector('#stay-start').value;
+    const end   = body.querySelector('#stay-end').value;
+    try {
+      await updateInfluencer(inf.id, { stay_start: start || null, stay_end: end || null });
+      toast('Stay dates saved', 'success');
+      inf.stay_start = start; inf.stay_end = end;
+      open(inf.id, callbacks);
+    } catch (err) { toast(err.message, 'error'); }
+  });
+
+  body.querySelector('#btn-clear-stay')?.addEventListener('click', async () => {
+    try {
+      await updateInfluencer(inf.id, { stay_start: null, stay_end: null });
+      toast('Stay dates cleared', 'info');
+      open(inf.id, callbacks);
     } catch (err) { toast(err.message, 'error'); }
   });
 

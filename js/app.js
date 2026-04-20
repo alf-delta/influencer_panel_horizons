@@ -12,6 +12,7 @@ import { render as renderCandidates } from './views/candidates.js';
 import { render as renderSettings }   from './views/settings.js';
 import { render as renderSearch }      from './views/search.js';
 import { render as renderGuide }       from './views/guide.js';
+import { render as renderCalendar }    from './views/calendar.js';
 import { open as openInfluencerDrawer, closeDrawer } from './views/influencer.js';
 
 // ---- State ----
@@ -198,6 +199,10 @@ function renderView(view, opts = {}) {
 
     case 'search':
       renderSearch(container, callbacks);
+      break;
+
+    case 'calendar':
+      renderCalendar(container, { ...callbacks, openInfluencer: id => openInfluencer(id) });
       break;
 
     case 'guide':
