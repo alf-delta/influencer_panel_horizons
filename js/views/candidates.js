@@ -34,10 +34,6 @@ export async function render(container, { openInfluencer, openId }) {
           <option value="California">California</option>
           <option value="Tennessee">Tennessee</option>
           <option value="Ohio">Ohio</option>
-          <option value="North Carolina">North Carolina</option>
-          <option value="Georgia">Georgia</option>
-          <option value="Florida">Florida</option>
-          <option value="New York">New York</option>
         </select>
         <select class="filter-select" id="f-zone">
           <option value="">All zones</option>
