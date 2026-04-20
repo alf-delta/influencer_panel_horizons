@@ -22,6 +22,9 @@ export function render(container) {
         <a class="guide-toc-link" href="#g-scoring">Import Score</a>
         <a class="guide-toc-link" href="#g-review">Review Scoring</a>
         <a class="guide-toc-link" href="#g-tiers">Tiers</a>
+        <a class="guide-toc-link" href="#g-brief">Content Brief</a>
+        <a class="guide-toc-link" href="#g-calendar">Calendar</a>
+        <a class="guide-toc-link" href="#g-candidates">Candidates Table</a>
         <a class="guide-toc-link" href="#g-ftc">FTC Compliance</a>
         <a class="guide-toc-link" href="#g-rules">Rules &amp; Policy</a>
         <a class="guide-toc-link" href="#g-faq">FAQ</a>
@@ -217,6 +220,110 @@ export function render(container) {
           </div>
         </section>
 
+        <!-- CONTENT BRIEF -->
+        <section class="guide-section" id="g-brief">
+          <h2 class="guide-h2">Content Brief</h2>
+          <p class="guide-p">
+            Each influencer profile has a <strong>Brief</strong> tab where you manage the campaign deliverables and creative direction. This is the single source of truth for what the influencer needs to deliver.
+          </p>
+
+          <h3 class="guide-h3">Deliverables Checklist</h3>
+          <p class="guide-p">The standard Horizons deliverable set is pre-loaded for every influencer. Check off each item as it is confirmed or delivered:</p>
+          <ul class="guide-ul">
+            <li><strong>First Impressions</strong> — videos/photos upon arrival, initial reaction</li>
+            <li><strong>Tour the Property</strong> — cabins, pool, sauna, pond, all amenities</li>
+            <li><strong>Morning Routine</strong> — sunrise, walking around, breakfast in the cabin</li>
+            <li><strong>Relaxation &amp; Fun</strong> — pool, sauna, pond, bikes, table tennis</li>
+            <li><strong>Dinner Prep</strong> — process of preparing dinner</li>
+            <li><strong>Raw Materials</strong> — raw footage of all 5 items above for the content manager</li>
+            <li><strong>Main Reel</strong> — 1 reel + 1 TikTok + 1 YouTube Short + Instagram Stories tagging Horizons. Main topic set in the Direction field.</li>
+          </ul>
+          <div class="guide-callout guide-callout-warn">
+            <strong>Important:</strong> All content must feature <strong>people</strong> to highlight joyful, vibrant moments — not just scenery. Film activities: sports, relaxing, exploring, biking, table tennis.
+          </div>
+
+          <h3 class="guide-h3">Direction / Main Topic</h3>
+          <p class="guide-p">
+            The <strong>Direction</strong> field is where content planners write the specific theme for the main reel — e.g. "Relaxation &amp; wellness getaway", "Couples retreat", "Birthday celebration". This replaces the [tbd] placeholder in the brief. Save it before sending the brief to the influencer.
+          </p>
+
+          <h3 class="guide-h3">Timeline &amp; delivery</h3>
+          <p class="guide-p">Influencers must deliver all materials <strong>within 3 days after check-out</strong> via a Google Drive or Dropbox folder with Horizons marked as <strong>Editor</strong>.</p>
+
+          <h3 class="guide-h3">Social tags (copy from Brief tab)</h3>
+          <div class="guide-table-wrap">
+            <table class="guide-table">
+              <thead><tr><th>Platform</th><th>Tag</th></tr></thead>
+              <tbody>
+                <tr><td>Instagram</td><td>@gohorizons</td></tr>
+                <tr><td>TikTok</td><td>@horizonsgetaways</td></tr>
+                <tr><td>Facebook</td><td>Horizons Sandhills page link</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="guide-p">Also ask guests to leave a review on: <strong>Google · Facebook · Tripadvisor · Yelp</strong>.</p>
+        </section>
+
+        <!-- CALENDAR -->
+        <section class="guide-section" id="g-calendar">
+          <h2 class="guide-h2">Calendar</h2>
+          <p class="guide-p">
+            The <strong>Calendar</strong> section (left sidebar) shows all confirmed influencer stays in a monthly grid. Each stay appears as a colored bar spanning the booked days, with the influencer's initials and first name.
+          </p>
+
+          <h3 class="guide-h3">Setting stay dates</h3>
+          <p class="guide-p">Open any influencer profile → <strong>Overview tab</strong> → <strong>Stay Dates</strong> block. Set Check-in and Check-out dates and click <strong>Save</strong>. The influencer will immediately appear on the calendar.</p>
+
+          <h3 class="guide-h3">Navigating the calendar</h3>
+          <ul class="guide-ul">
+            <li>Use <strong>‹ ›</strong> arrows to move between months</li>
+            <li>Click <strong>Today</strong> to jump back to the current month</li>
+            <li>Click any event bar to open the influencer's full profile</li>
+          </ul>
+
+          <h3 class="guide-h3">Monthly summary</h3>
+          <p class="guide-p">
+            The right-side panel lists all stays in the current month sorted by check-in date — useful for quick load assessment. Click any row to open the profile.
+          </p>
+
+          <div class="guide-callout">
+            Only influencers with stay dates set will appear on the calendar. Influencers without confirmed dates remain in the pipeline but are not shown here.
+          </div>
+        </section>
+
+        <!-- CANDIDATES TABLE -->
+        <section class="guide-section" id="g-candidates">
+          <h2 class="guide-h2">Candidates Table</h2>
+          <p class="guide-p">The <strong>Candidates</strong> section shows all influencers across all pipeline stages. You can filter, sort, bulk-move, and bulk-delete from here.</p>
+
+          <h3 class="guide-h3">Filters</h3>
+          <div class="guide-table-wrap">
+            <table class="guide-table">
+              <thead><tr><th>Filter</th><th>What it does</th></tr></thead>
+              <tbody>
+                <tr><td>Search</td><td>Filters by influencer name (live, 300ms debounce)</td></tr>
+                <tr><td>All locations</td><td>Filters by state — South Carolina, Texas, California, Tennessee, Ohio</td></tr>
+                <tr><td>All zones</td><td>Filters by geo zone A / B / C</td></tr>
+                <tr><td>All platforms</td><td>Instagram, TikTok, or YouTube</td></tr>
+                <tr><td>All tiers</td><td>Gold, Silver, Bronze, Unrated</td></tr>
+                <tr><td>All stages</td><td>Filters by pipeline stage</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="guide-h3">Bulk actions</h3>
+          <p class="guide-p">Check one or more rows to reveal the bulk action bar:</p>
+          <ul class="guide-ul">
+            <li><strong>Move to stage</strong> — moves all selected influencers to the chosen pipeline stage at once</li>
+            <li><strong>Delete selected</strong> — permanently deletes selected records (candidates only — use Archive for pipeline influencers)</li>
+          </ul>
+
+          <h3 class="guide-h3">Duplicate detection in Search</h3>
+          <p class="guide-p">
+            When running an AI Search, influencers already in the panel are automatically detected and shown with an <strong>IN PANEL</strong> badge and a dimmed row. Their checkbox is unchecked by default. A summary line at the bottom of the results table shows the total duplicate count. Even if you manually check a duplicate and click Import, it will be skipped — no double entries are created.
+          </p>
+        </section>
+
         <!-- FTC -->
         <section class="guide-section" id="g-ftc">
           <h2 class="guide-h2">FTC Compliance</h2>
@@ -330,6 +437,26 @@ export function render(container) {
             <div class="guide-faq-item">
               <div class="guide-faq-q">Where is the promo code shown to the influencer?</div>
               <div class="guide-faq-a">You send it manually — the panel stores it for reference only. Copy it from the influencer's Overview tab (Affiliate Code field) and include it in your onboarding message. The format is FIRSTNAME15 by default — edit it in the profile if the influencer requests a different code.</div>
+            </div>
+
+            <div class="guide-faq-item">
+              <div class="guide-faq-q">How do I add an influencer to the calendar?</div>
+              <div class="guide-faq-a">Open the influencer's profile → Overview tab → Stay Dates block. Set Check-in and Check-out dates and click Save. They will immediately appear on the calendar as a colored bar spanning their stay. To remove them from the calendar, click Clear in the same block.</div>
+            </div>
+
+            <div class="guide-faq-item">
+              <div class="guide-faq-q">How do I fill in the content direction for a campaign?</div>
+              <div class="guide-faq-a">Open the influencer's profile → Brief tab → Direction / Main Topic field. Write the theme for the main reel (e.g. "Couples retreat · romantic vibes"). Click Save. This sets the main topic that replaces [tbd] in the standard brief before it is sent to the influencer.</div>
+            </div>
+
+            <div class="guide-faq-item">
+              <div class="guide-faq-q">I need to filter candidates by state — where is that?</div>
+              <div class="guide-faq-a">In the Candidates table, use the <strong>All locations</strong> dropdown in the filter bar. It filters by the influencer's location field and covers our 5 target states: South Carolina, Texas, California, Tennessee, and Ohio.</div>
+            </div>
+
+            <div class="guide-faq-item">
+              <div class="guide-faq-q">Why do some search results show "IN PANEL"?</div>
+              <div class="guide-faq-a">Those influencers are already in the panel database. They are automatically unchecked to prevent duplicates. You can still import them manually by checking the box — the system will skip the actual insert, so no double entry is created.</div>
             </div>
 
           </div>
