@@ -445,18 +445,44 @@ function showIterationModal(inf, callbacks) {
 
 // ---- Brief Tab ----
 
-const DELIVERABLES = [
-  { id: 'first_impressions', label: 'First Impressions', desc: 'Capture videos/photos upon arrival to showcase the initial reaction' },
-  { id: 'property_tour',     label: 'Tour the Property', desc: 'Highlight key features: cabins, pool, sauna, pond, and all other amenities' },
-  { id: 'morning_routine',   label: 'Morning Routine',   desc: 'Waking up in the cabin, enjoying the sunrise, walking around, eating breakfast' },
-  { id: 'relaxation_fun',    label: 'Relaxation & Fun',  desc: 'Pool, sauna, pond, bikes, table tennis, and other activities' },
-  { id: 'dinner_prep',       label: 'Dinner Prep',       desc: 'Document the process of preparing dinner' },
-  { id: 'raw_materials',     label: 'Raw Materials',     desc: 'Raw footage of all 5 items above — delivered to our content manager for future posts' },
-  { id: 'main_reel',         label: 'Main Reel',         desc: '1 comprehensive reel + 1 TikTok + 1 YouTube Short + Instagram Stories tagging us. Main topic: set in Direction field below' },
-];
+const NETWORK_FORMATS = {
+  instagram: {
+    label: 'Instagram', color: '#E1306C', tag: '@gohorizons',
+    formats: [
+      { id: 'reels',    label: 'Reels' },
+      { id: 'stories',  label: 'Stories' },
+      { id: 'posts',    label: 'Feed Posts' },
+      { id: 'raw',      label: 'Raw Materials' },
+    ],
+  },
+  tiktok: {
+    label: 'TikTok', color: '#010101', tag: '@horizonsgetaways',
+    formats: [
+      { id: 'videos',   label: 'Videos' },
+      { id: 'raw',      label: 'Raw Materials' },
+    ],
+  },
+  youtube: {
+    label: 'YouTube', color: '#FF0000', tag: '@horizonsgetaways',
+    formats: [
+      { id: 'shorts',   label: 'Shorts' },
+      { id: 'videos',   label: 'Long-form Videos' },
+      { id: 'raw',      label: 'Raw Materials' },
+    ],
+  },
+  facebook: {
+    label: 'Facebook', color: '#1877F2', tag: 'Horizons Sandhills',
+    formats: [
+      { id: 'posts',    label: 'Posts' },
+      { id: 'stories',  label: 'Stories' },
+      { id: 'raw',      label: 'Raw Materials' },
+    ],
+  },
+};
 
 function renderBrief(body, inf) {
-  const checked  = Array.isArray(inf.deliverables) ? inf.deliverables : [];
+  const pkg       = (inf.content_package && typeof inf.content_package === 'object') ? inf.content_package : {};
+  const networks  = Array.isArray(pkg.networks) ? pkg.networks : [];
   const direction = inf.content_direction || '';
 
   body.innerHTML = `
@@ -468,22 +494,38 @@ function renderBrief(body, inf) {
     </div>
 
     <div class="section">
-      <div class="section-title" style="margin-bottom:12px">Deliverables Checklist</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${DELIVERABLES.map(d => `
-          <label class="brief-deliverable ${checked.includes(d.id) ? 'checked' : ''}" style="cursor:pointer">
-            <input type="checkbox" class="brief-cb" data-id="${d.id}" ${checked.includes(d.id) ? 'checked' : ''} style="flex-shrink:0;margin-top:2px">
-            <div>
-              <div style="font-size:13px;font-weight:600;color:var(--navy)">${d.label}</div>
-              <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5">${d.desc}</div>
-            </div>
+      <div class="section-title" style="margin-bottom:12px">Content Package</div>
+
+      <div class="brief-networks-row">
+        ${Object.entries(NETWORK_FORMATS).map(([id, net]) => `
+          <label class="brief-net-chip ${networks.includes(id) ? 'active' : ''}" style="--net-color:${net.color}">
+            <input type="checkbox" class="brief-net-cb" data-net="${id}" ${networks.includes(id) ? 'checked' : ''}>
+            ${net.label}
           </label>`).join('')}
+      </div>
+
+      <div id="brief-formats-wrap" style="margin-top:16px;display:flex;flex-direction:column;gap:12px">
+        ${Object.entries(NETWORK_FORMATS).map(([id, net]) => `
+          <div class="brief-net-block ${networks.includes(id) ? '' : 'hidden'}" data-net="${id}">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${net.color};margin-bottom:8px">${net.label}</div>
+            <div class="brief-formats-grid">
+              ${net.formats.map(f => `
+                <div class="brief-format-row">
+                  <span class="brief-format-label">${f.label}</span>
+                  <input type="number" min="0" max="99" class="input brief-qty-input"
+                         data-net="${id}" data-fmt="${f.id}"
+                         value="${(pkg[id] && pkg[id][f.id]) || 0}"
+                         style="width:64px;text-align:center;padding:4px 8px">
+                  <span style="font-size:12px;color:var(--muted)">pcs</span>
+                </div>`).join('')}
+            </div>
+          </div>`).join('')}
       </div>
     </div>
 
     <div class="section">
       <div class="section-title" style="margin-bottom:8px">Direction / Main Topic</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Set the main topic for the comprehensive reel. Content planners fill this in per campaign.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Set the main topic for the campaign. Content planners fill this in per stay.</div>
       <textarea class="input" id="brief-direction" rows="3" placeholder="e.g. Relaxation & wellness getaway · Couples retreat · Birthday celebration…">${direction}</textarea>
       <button class="btn btn-primary btn-sm" id="btn-save-direction" style="margin-top:8px">Save Direction</button>
     </div>
@@ -491,7 +533,7 @@ function renderBrief(body, inf) {
     <div class="section">
       <div class="section-title" style="margin-bottom:10px">Timeline</div>
       <div style="font-size:13px;line-height:1.7;color:var(--text)">
-        Provide and post all materials <strong>within 3 days after departure</strong> via Google Drive or Dropbox folder — mark Horizons as <strong>Editor</strong>.
+        Provide and post all materials <strong>within 3 days after departure</strong> via Google Drive or Dropbox — mark Horizons as <strong>Editor</strong>.
       </div>
     </div>
 
@@ -512,16 +554,34 @@ function renderBrief(body, inf) {
       <a href="https://www.google.com/maps/place/Horizons+Sandhills/@34.6049918,-80.1000901,17z" target="_blank" style="font-size:12px;color:var(--accent);margin-top:4px;display:inline-block">Google Maps link →</a>
     </div>`;
 
-  // Save deliverable checkboxes on change
-  body.querySelectorAll('.brief-cb').forEach(cb => {
-    cb.addEventListener('change', async () => {
-      const newChecked = [...body.querySelectorAll('.brief-cb:checked')].map(c => c.dataset.id);
-      cb.closest('.brief-deliverable').classList.toggle('checked', cb.checked);
-      try {
-        await updateInfluencer(inf.id, { deliverables: newChecked });
-        inf.deliverables = newChecked;
-      } catch (err) { toast(err.message, 'error'); }
+  async function savePackage() {
+    const newNetworks = [...body.querySelectorAll('.brief-net-cb:checked')].map(c => c.dataset.net);
+    const newPkg = { networks: newNetworks };
+    body.querySelectorAll('.brief-qty-input').forEach(inp => {
+      const { net, fmt } = inp.dataset;
+      if (!newPkg[net]) newPkg[net] = {};
+      newPkg[net][fmt] = parseInt(inp.value) || 0;
     });
+    try {
+      await updateInfluencer(inf.id, { content_package: newPkg });
+      inf.content_package = newPkg;
+    } catch (err) { toast(err.message, 'error'); }
+  }
+
+  // Network checkboxes — show/hide blocks
+  body.querySelectorAll('.brief-net-cb').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const block = body.querySelector(`.brief-net-block[data-net="${cb.dataset.net}"]`);
+      const chip  = cb.closest('.brief-net-chip');
+      block?.classList.toggle('hidden', !cb.checked);
+      chip?.classList.toggle('active', cb.checked);
+      savePackage();
+    });
+  });
+
+  // Qty inputs — save on change
+  body.querySelectorAll('.brief-qty-input').forEach(inp => {
+    inp.addEventListener('change', savePackage);
   });
 
   // Save direction

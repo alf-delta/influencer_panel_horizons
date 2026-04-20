@@ -63,6 +63,7 @@ alter table influencers add column if not exists stay_end   date;
 -- Migration: content brief fields on influencers
 alter table influencers add column if not exists deliverables       jsonb default '[]';
 alter table influencers add column if not exists content_direction  text;
+alter table influencers add column if not exists content_package    jsonb default '{}';
 
 -- Attio webhook sync log
 create table if not exists attio_sync_log (
