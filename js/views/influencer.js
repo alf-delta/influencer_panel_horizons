@@ -147,15 +147,6 @@ function renderOverview(body, inf, callbacks) {
             <div class="stage-label">${STAGE_LABELS[s]}</div>
           </div>`).join('')}
       </div>
-      ${!isArchived ? `
-        <div class="section-title" style="margin-top:16px">Current stage checklist</div>
-        <div class="checklist">
-          ${(STAGE_CHECKLISTS[inf.status] || []).map(item => `
-            <div class="check-row">
-              <div class="check-icon pending"></div>
-              <span>${item}</span>
-            </div>`).join('')}
-        </div>` : ''}
     </div>
 
     ${inf.notes ? `
