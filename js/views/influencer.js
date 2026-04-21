@@ -488,7 +488,7 @@ function renderBrief(body, inf) {
   body.innerHTML = `
     <div class="section">
       <div class="section-title" style="margin-bottom:10px">Important Note</div>
-      <div style="background:#FFFBEB;border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text)">
+      <div class="guide-callout">
         Please ensure the content includes <strong>people</strong> to highlight joyful experiences and vibrant moments. Film activities — sports, relaxing, exploring nature, biking, table tennis. Capture wildlife, scenic paths, and peaceful surroundings.
       </div>
     </div>
