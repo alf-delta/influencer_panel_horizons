@@ -7,6 +7,7 @@ import { getInfluencer, getIterations, createIteration, updateInfluencer, advanc
 import { computeReviewTier, STAGE_ORDER, STAGE_LABELS, STAGE_CHECKLISTS } from '../scoring.js';
 import { SCENARIOS, PERSONALITIES, getFrames, getScenarioLabel } from '../frames.js';
 import { avatar, tierBadge, zoneBadge, platformBadge, statusBadge, scoreBar, toast, openModal, closeModal } from '../ui.js';
+import { openScriptPanel, closeScriptPanel } from './script-panel.js';
 
 let _activeTab = 'overview';
 
@@ -25,6 +26,7 @@ export async function open(id, { onClose, onRefresh }) {
       getIterations(id),
     ]);
     renderDrawer(drawer, inf, iterations, { onClose, onRefresh });
+    openScriptPanel(inf);
   } catch (err) {
     drawer.innerHTML = `<div style="padding:24px;color:var(--danger)">Error: ${err.message}</div>`;
   }
@@ -37,6 +39,7 @@ export function closeDrawer(onClose) {
   const backdrop = document.getElementById('drawer-backdrop');
   drawer.classList.remove('open');
   backdrop.classList.remove('visible');
+  closeScriptPanel();
   if (onClose) onClose();
 }
 
